@@ -37,7 +37,7 @@ class AppTheme {
         centerTitle: true,
       ),
       cardTheme: CardTheme(
-        color: AppColors.cardBackground,
+        surfaceTintColor: AppColors.cardBackground,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -74,11 +74,11 @@ class AppTheme {
         fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -98,13 +98,13 @@ class AppTheme {
         elevation: 8,
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.textSecondary.withOpacity(0.2),
+        color: AppColors.textSecondary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
         thickness: 1,
         space: 1,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.primaryLight,
-        disabledColor: AppColors.textSecondary.withOpacity(0.1),
+        disabledColor: AppColors.textSecondary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
         selectedColor: AppColors.primary,
         secondarySelectedColor: AppColors.secondary,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -116,7 +116,7 @@ class AppTheme {
         activeTrackColor: AppColors.primary,
         inactiveTrackColor: AppColors.primaryLight,
         thumbColor: AppColors.primary,
-        overlayColor: AppColors.primary.withOpacity(0.2),
+        overlayColor: AppColors.primary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
         trackHeight: 4,
       ),
     );
@@ -156,7 +156,7 @@ class AppTheme {
         centerTitle: true,
       ),
       cardTheme: CardTheme(
-        color: AppColors.darkCardBackground,
+        surfaceTintColor: AppColors.darkCardBackground,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -193,11 +193,11 @@ class AppTheme {
         fillColor: AppColors.darkSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.darkTextSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.darkTextSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.darkTextSecondary.withOpacity(0.3)),
+          borderSide: BorderSide(color: AppColors.darkTextSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -217,13 +217,13 @@ class AppTheme {
         elevation: 8,
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.darkTextSecondary.withOpacity(0.2),
+        color: AppColors.darkTextSecondary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
         thickness: 1,
         space: 1,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.primaryDark,
-        disabledColor: AppColors.darkTextSecondary.withOpacity(0.1),
+        disabledColor: AppColors.darkTextSecondary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
         selectedColor: AppColors.primaryLight,
         secondarySelectedColor: AppColors.secondaryLight,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -235,7 +235,7 @@ class AppTheme {
         activeTrackColor: AppColors.primaryLight,
         inactiveTrackColor: AppColors.primaryDark,
         thumbColor: AppColors.primaryLight,
-        overlayColor: AppColors.primaryLight.withOpacity(0.2),
+        overlayColor: AppColors.primaryLight.withValues(alpha: 51), // 0.2 * 255 ≈ 51
         trackHeight: 4,
       ),
     );

@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// Remove Riverpod as we're using Provider
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'app.dart';
 import 'config/env_config.dart';
@@ -12,6 +13,8 @@ import 'data/services/user_service.dart';
 import 'data/services/ai_service.dart';
 import 'data/services/notification_service.dart';
 import 'data/services/nrt_service.dart';
+import 'data/services/subscription_service.dart';
+import 'data/services/ad_service.dart';
 import 'shared/constants/app_constants.dart';
 
 void main() async {
@@ -46,22 +49,26 @@ void main() async {
   final aiService = AIService(storageService);
   final notificationService = NotificationService();
   final nrtService = NRTService(storageService);
+  final subscriptionService = SubscriptionService();
+  final adService = AdService();
   
+  // Initialize services
   await notificationService.init();
+  await adService.initialize();
   
   // Run the app with providers
   runApp(
-    ProviderScope(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider<UserService>(create: (_) => userService),
-          ChangeNotifierProvider<AIService>(create: (_) => aiService),
-          ChangeNotifierProvider<NRTService>(create: (_) => nrtService),
-          Provider<StorageService>(create: (_) => storageService),
-          Provider<NotificationService>(create: (_) => notificationService),
-        ],
-        child: const QuitVapingApp(),
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserService>(create: (_) => userService),
+        ChangeNotifierProvider<AIService>(create: (_) => aiService),
+        ChangeNotifierProvider<NRTService>(create: (_) => nrtService),
+        ChangeNotifierProvider<SubscriptionService>(create: (_) => subscriptionService),
+        Provider<StorageService>(create: (_) => storageService),
+        Provider<NotificationService>(create: (_) => notificationService),
+        Provider<AdService>(create: (_) => adService),
+      ],
+      child: const QuitVapingApp(),
     ),
   );
 }

@@ -54,8 +54,8 @@ class NRTUsageChart extends StatelessWidget {
       final firstHalf = spots.sublist(0, spots.length ~/ 2);
       final secondHalf = spots.sublist(spots.length ~/ 2);
       
-      final firstAvg = firstHalf.fold(0.0, (sum, spot) => sum + spot.y) / firstHalf.length;
-      final secondAvg = secondHalf.fold(0.0, (sum, spot) => sum + spot.y) / secondHalf.length;
+      final firstAvg = firstHalf.fold(0.0, (sum, spot) => sum + spot.y) / (firstHalf.isEmpty ? 1 : firstHalf.length);
+      final secondAvg = secondHalf.fold(0.0, (sum, spot) => sum + spot.y) / (secondHalf.isEmpty ? 1 : secondHalf.length);
       
       if (secondAvg < firstAvg * 0.9) {
         trend = 'decreasing';
@@ -191,7 +191,7 @@ class NRTUsageChart extends StatelessWidget {
                             dotData: FlDotData(show: true),
                             belowBarData: BarAreaData(
                               show: true,
-                              color: AppColors.primary.withOpacity(0.2),
+                              color: AppColors.primary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
                             ),
                           ),
                         ],
@@ -221,7 +221,7 @@ class NRTUsageChart extends StatelessWidget {
                   context,
                   'Total',
                   '${_calculateTotal(dailyTotals, dates)} mg',
-                  Icons.sum,
+                  Icons.calculate,
                 ),
               ],
             ),

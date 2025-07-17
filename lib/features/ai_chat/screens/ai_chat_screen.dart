@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/services/ai_service.dart';
+import '../../../data/services/subscription_service.dart';
 import '../../../data/models/ai_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../widgets/chat_message.dart';
+import '../../subscription/widgets/premium_feature_overlay.dart';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({Key? key}) : super(key: key);
@@ -39,51 +41,67 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI Coach'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              _showClearChatDialog();
+    return Consumer<SubscriptionService>(
+      builder: (context, subscriptionService, child) {
+        final isPremium = subscriptionService.isPremium;
+        
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('AI Coach'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  _showClearChatDialog();
+                },
+              ),
+            ],
+          ),
+          body: isPremium 
+              ? _buildChatContent()
+              : PremiumFeatureOverlay(
+                  featureName: 'Unlimited AI Coach',
+                  description: 'Get unlimited access to your personal AI coach to help you through your quit journey.',
+                  child: _buildChatContent(),
+                ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildChatContent() {
+    return Column(
+      children: [
+        Expanded(
+          child: Consumer<AIService>(
+            builder: (context, aiService, child) {
+              final messages = aiService.chatHistory;
+              
+              if (messages.isEmpty) {
+                return _buildEmptyChat();
+              }
+              
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _scrollToBottom();
+              });
+              
+              return ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.all(16),
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  return ChatMessage(
+                    message: message,
+                    isUser: message.sender == 'user',
+                  );
+                },
+              );
             },
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Consumer<AIService>(
-              builder: (context, aiService, child) {
-                final messages = aiService.chatHistory;
-                
-                if (messages.isEmpty) {
-                  return _buildEmptyChat();
-                }
-                
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _scrollToBottom();
-                });
-                
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16),
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ChatMessage(
-                      message: message,
-                      isUser: message.sender == 'user',
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          _buildInputArea(),
-        ],
-      ),
+        ),
+        _buildInputArea(),
+      ],
     );
   }
 

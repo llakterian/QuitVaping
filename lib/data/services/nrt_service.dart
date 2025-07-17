@@ -229,7 +229,8 @@ class NRTService extends ChangeNotifier {
     final Map<String, List<NRTModel>> usageByDay = {};
     for (final record in sortedUsage) {
       final day = '${record.timestamp.year}-${record.timestamp.month}-${record.timestamp.day}';
-      usageByDay[day] = [...(usageByDay[day] ?? []), record];
+      final existingRecords = usageByDay[day] ?? [];
+      usageByDay[day] = [...existingRecords, record];
     }
     
     // Calculate daily totals

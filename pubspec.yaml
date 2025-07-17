@@ -15,7 +15,9 @@ dependencies:
   hive_flutter: ^1.1.0
   uuid: ^3.0.7
   intl: ^0.18.0
-  flutter_local_notifications: ^13.0.0
+  flutter_local_notifications: ^17.2.4
+  flutter_local_notifications_linux: ^4.0.0+1
+  flutter_local_notifications_platform_interface: ^7.0.0
   shared_preferences: ^2.1.0
   path_provider: ^2.0.14
   flutter_svg: ^2.0.5
@@ -42,6 +44,10 @@ dependencies:
   freezed_annotation: ^2.2.0
   json_annotation: ^4.8.1
   flutter_dotenv: ^5.0.2
+  # Monetization packages
+  in_app_purchase: ^3.1.11
+  google_mobile_ads: ^3.1.0
+  purchases_flutter: ^6.0.0  # RevenueCat for subscription management
 
 dev_dependencies:
   flutter_test:

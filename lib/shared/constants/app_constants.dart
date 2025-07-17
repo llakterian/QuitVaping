@@ -103,6 +103,7 @@ class AppConstants {
         {'action': 'hold', 'seconds': 4, 'instruction': 'Hold your breath'},
       ],
       'benefits': 'Reduces stress and improves concentration',
+      'isPremium': false,
     },
     '478': {
       'name': '4-7-8 Breathing',
@@ -113,6 +114,7 @@ class AppConstants {
         {'action': 'exhale', 'seconds': 8, 'instruction': 'Exhale completely through your mouth'},
       ],
       'benefits': 'Helps with anxiety, sleep, and managing cravings',
+      'isPremium': true,
     },
     'diaphragmatic': {
       'name': 'Diaphragmatic Breathing',
@@ -123,6 +125,7 @@ class AppConstants {
         {'action': 'exhale', 'seconds': 6, 'instruction': 'Exhale slowly through pursed lips'},
       ],
       'benefits': 'Reduces stress and increases oxygen supply',
+      'isPremium': true,
     },
     'pursed': {
       'name': 'Pursed Lip Breathing',
@@ -132,6 +135,7 @@ class AppConstants {
         {'action': 'exhale', 'seconds': 4, 'instruction': 'Exhale slowly through pursed lips'},
       ],
       'benefits': 'Improves ventilation and releases trapped air in lungs',
+      'isPremium': false,
     },
   };
   
@@ -148,6 +152,7 @@ class AppConstants {
         'Name 1 thing you can taste',
       ],
       'duration': 60, // seconds
+      'isPremium': false,
     },
     {
       'title': 'Quick Physical Activity',
@@ -159,6 +164,7 @@ class AppConstants {
         '10 seconds of jogging in place',
       ],
       'duration': 45, // seconds
+      'isPremium': false,
     },
     {
       'title': 'Cold Water Technique',
@@ -170,6 +176,7 @@ class AppConstants {
         'Notice how the cold feeling changes your focus',
       ],
       'duration': 30, // seconds
+      'isPremium': false,
     },
     {
       'title': 'Urge Surfing',
@@ -182,6 +189,66 @@ class AppConstants {
         'Remind yourself that all cravings eventually pass',
       ],
       'duration': 90, // seconds
+      'isPremium': false,
+    },
+    // Premium distraction techniques
+    {
+      'title': 'Progressive Muscle Relaxation',
+      'description': 'Systematically tense and relax muscle groups to reduce physical tension',
+      'steps': [
+        'Find a comfortable position and close your eyes',
+        'Tense the muscles in your feet for 5 seconds, then release',
+        'Tense your calf muscles for 5 seconds, then release',
+        'Continue up through your legs, abdomen, chest, arms, and face',
+        'Notice the feeling of relaxation spreading through your body',
+        'Take deep breaths and enjoy the sensation of relaxation',
+      ],
+      'duration': 120, // seconds
+      'isPremium': true,
+    },
+    {
+      'title': 'Guided Imagery',
+      'description': 'Use your imagination to transport yourself to a peaceful place',
+      'steps': [
+        'Close your eyes and take several deep breaths',
+        'Imagine a peaceful place (beach, forest, mountain, etc.)',
+        'Visualize the details - colors, sounds, smells, textures',
+        'Imagine yourself completely relaxed in this place',
+        'Feel the calmness and serenity washing over you',
+        'Stay in this peaceful place for a few minutes',
+      ],
+      'duration': 180, // seconds
+      'isPremium': true,
+    },
+    {
+      'title': 'Mindful Body Scan',
+      'description': 'A meditation technique to bring awareness to each part of your body',
+      'steps': [
+        'Sit or lie down in a comfortable position',
+        'Close your eyes and focus on your breathing',
+        'Bring attention to your feet, noticing any sensations',
+        'Slowly move your attention up through your body',
+        'Notice any areas of tension and breathe into them',
+        'Complete the scan at the top of your head',
+        'Take a moment to feel your entire body as a whole',
+      ],
+      'duration': 240, // seconds
+      'isPremium': true,
+    },
+    {
+      'title': 'Personalized Craving Analysis',
+      'description': 'Analyze your craving triggers and develop personalized coping strategies',
+      'steps': [
+        'Identify what triggered this specific craving',
+        'Rate the intensity of your craving from 1-10',
+        'Write down your thoughts and emotions',
+        'Identify patterns from previous cravings',
+        'Select a personalized coping strategy',
+        'Implement the strategy and note its effectiveness',
+        'Plan how to handle similar situations in the future',
+      ],
+      'duration': 180, // seconds
+      'isPremium': true,
     },
   ];
   

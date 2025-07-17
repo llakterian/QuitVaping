@@ -65,6 +65,9 @@ class VapingHistoryModel with _$VapingHistoryModel {
 
 // Extension methods for UserModel
 extension UserModelExtension on UserModel {
+  // Check if user has set a quit date
+  bool get hasQuitDate => quitDate != null;
+  
   // Calculate dependency level based on vaping history
   String get dependencyLevel {
     final score = vapingHistory.calculateDependencyScore();

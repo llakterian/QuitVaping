@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
 import '../widgets/breathing_animation.dart';
+import '../../../data/services/subscription_service.dart';
+import '../../subscription/widgets/premium_feature_overlay.dart';
+import '../../subscription/screens/subscription_screen.dart';
 
 class BreathingScreen extends StatefulWidget {
   const BreathingScreen({Key? key}) : super(key: key);
@@ -44,6 +48,9 @@ class _BreathingScreenState extends State<BreathingScreen> {
   }
 
   Widget _buildSelectionView() {
+    final subscriptionService = Provider.of<SubscriptionService>(context);
+    final isPremium = subscriptionService.isPremium;
+    
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -63,18 +70,65 @@ class _BreathingScreenState extends State<BreathingScreen> {
                   final key = entry.key;
                   final exercise = entry.value;
                   final isSelected = _selectedExercise == key;
+                  final isPremiumExercise = exercise['isPremium'] as bool;
                   
-                  return RadioListTile<String>(
-                    title: Text(exercise['name'] as String),
-                    subtitle: Text(exercise['description'] as String),
-                    value: key,
-                    groupValue: _selectedExercise,
-                    activeColor: AppColors.primary,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedExercise = value!;
-                      });
-                    },
+                  return Stack(
+                    children: [
+                      RadioListTile<String>(
+                        title: Row(
+                          children: [
+                            Text(exercise['name'] as String),
+                            if (isPremiumExercise)
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Text(
+                                  'PREMIUM',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        subtitle: Text(exercise['description'] as String),
+                        value: key,
+                        groupValue: _selectedExercise,
+                        activeColor: AppColors.primary,
+                        onChanged: (isPremiumExercise && !isPremium) 
+                            ? null  // Disable selection for premium exercises if user is not premium
+                            : (value) {
+                                setState(() {
+                                  _selectedExercise = value!;
+                                });
+                              },
+                      ),
+                      if (isPremiumExercise && !isPremium)
+                        Positioned.fill(
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SubscriptionScreen(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   );
                 }).toList(),
               ],
@@ -246,6 +300,19 @@ class _BreathingScreenState extends State<BreathingScreen> {
   }
 
   void _startExercise() {
+    final subscriptionService = Provider.of<SubscriptionService>(context, listen: false);
+    final isPremium = subscriptionService.isPremium;
+    final isPremiumExercise = AppConstants.breathingExercises[_selectedExercise]?['isPremium'] as bool;
+    
+    // Check if user is trying to use a premium exercise without subscription
+    if (isPremiumExercise && !isPremium) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+      );
+      return;
+    }
+    
     setState(() {
       _isExercising = true;
       _remainingSeconds = _duration * 60;

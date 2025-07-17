@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../data/services/user_service.dart';
+import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../checkins/screens/checkin_screen.dart';
 import '../../ai_chat/screens/ai_chat_screen.dart';
 import '../../breathing/screens/breathing_screen.dart';
 import '../../panic_mode/screens/panic_mode_screen.dart';
 import '../../nrt_tracker/screens/nrt_tracker_screen.dart';
+import '../../settings/screens/settings_screen.dart';
+import '../../subscription/screens/subscription_screen.dart';
+import '../../subscription/widgets/banner_ad_widget.dart';
 import '../widgets/progress_tracker.dart';
 import '../widgets/health_milestone_card.dart';
 import '../widgets/savings_card.dart';
 import '../widgets/quick_actions.dart';
+import '../widgets/premium_insights_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -49,7 +54,12 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Navigate to settings
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
             },
           ),
         ],
@@ -108,16 +118,17 @@ class _HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserService>(
-      builder: (context, userService, child) {
+    return Consumer2<UserService, SubscriptionService>(
+      builder: (context, userService, subscriptionService, child) {
         final user = userService.currentUser;
         final progress = userService.progress;
+        final isPremium = subscriptionService.isPremium;
         
         if (user == null) {
           return const Center(child: Text('No user data available'));
         }
 
-        if (!user.hasQuitDate) {
+        if (user.quitDate == null) {
           return _buildSetQuitDatePrompt(context, userService);
         }
 
@@ -131,8 +142,12 @@ class _HomeTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Premium upgrade banner (only for free users)
+                if (!isPremium)
+                  _buildPremiumBanner(context),
+                
                 // Progress Tracker
-                ProgressTracker(user: user, progress: progress),
+                ProgressTracker(user: user, progress: progress ?? userService.createDefaultProgress(user)),
                 const SizedBox(height: 16),
                 
                 // Quick Actions
@@ -140,11 +155,11 @@ class _HomeTab extends StatelessWidget {
                 const SizedBox(height: 16),
                 
                 // Health Milestone Card
-                HealthMilestoneCard(user: user, progress: progress),
+                HealthMilestoneCard(user: user, progress: progress ?? userService.createDefaultProgress(user)),
                 const SizedBox(height: 16),
                 
                 // Savings Card
-                SavingsCard(user: user, progress: progress),
+                SavingsCard(user: user, progress: progress ?? userService.createDefaultProgress(user)),
                 const SizedBox(height: 16),
                 
                 // Recent Activity
@@ -153,6 +168,18 @@ class _HomeTab extends StatelessWidget {
                 
                 // Motivational Quote
                 _buildMotivationalQuote(context),
+                
+                // Premium Insights Card
+                const SizedBox(height: 16),
+                PremiumInsightsCard(user: user, progress: progress ?? userService.createDefaultProgress(user)),
+                
+                // Banner Ad (only for free users)
+                if (!isPremium) 
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: BannerAdWidget(),
+                  ),
+                  
                 const SizedBox(height: 100), // Space for FAB
               ],
             ),
@@ -270,7 +297,7 @@ class _HomeTab extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 26), // 0.1 * 255 ≈ 26
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -310,7 +337,7 @@ class _HomeTab extends StatelessWidget {
     final quote = quotes[DateTime.now().day % quotes.length];
     
     return Card(
-      color: AppColors.primary.withOpacity(0.1),
+      color: AppColors.primary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -331,6 +358,96 @@ class _HomeTab extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildPremiumBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary,
+              AppColors.primary.withBlue(255),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 77), // 0.3 * 255 ≈ 77
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 51), // 0.2 * 255 ≈ 51
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.star,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Upgrade to Premium',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Get personalized plans, unlimited AI chat, and more!',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 230), // 0.9 * 255 ≈ 230
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Try Free',
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

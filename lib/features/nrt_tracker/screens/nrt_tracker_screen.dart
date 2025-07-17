@@ -6,9 +6,11 @@ import 'package:uuid/uuid.dart';
 import '../../../data/models/nrt_model.dart';
 import '../../../data/services/nrt_service.dart';
 import '../../../data/services/user_service.dart';
+import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../widgets/nrt_usage_chart.dart';
 import '../widgets/nrt_schedule_card.dart';
+import '../widgets/nrt_analytics_tab.dart';
 
 class NRTTrackerScreen extends StatefulWidget {
   const NRTTrackerScreen({Key? key}) : super(key: key);
@@ -23,7 +25,7 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
   
   @override
@@ -42,6 +44,7 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
           tabs: const [
             Tab(text: 'Usage Log'),
             Tab(text: 'Reduction Plan'),
+            Tab(text: 'Analytics'),
           ],
         ),
       ),
@@ -50,6 +53,7 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
         children: const [
           _UsageLogTab(),
           _ReductionPlanTab(),
+          NRTAnalyticsTab(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -135,7 +139,7 @@ class _UsageLogTab extends StatelessWidget {
                 itemCount: sortedDates.length,
                 itemBuilder: (context, index) {
                   final dateStr = sortedDates[index];
-                  final dateRecords = usageByDate[dateStr]!;
+                  final dateRecords = usageByDate[dateStr] ?? [];
                   final date = DateFormat('yyyy-MM-dd').parse(dateStr);
                   final formattedDate = DateFormat.yMMMd().format(date);
                   
@@ -156,7 +160,7 @@ class _UsageLogTab extends StatelessWidget {
                       children: dateRecords.map((record) {
                         return ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: AppColors.primary.withOpacity(0.1),
+                            backgroundColor: AppColors.primary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
                             child: const Icon(Icons.medication, color: AppColors.primary),
                           ),
                           title: Text(record.type.displayName),

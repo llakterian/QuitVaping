@@ -235,6 +235,19 @@ class UserService extends ChangeNotifier {
     };
   }
   
+  // Create default progress for a user
+  ProgressModel createDefaultProgress(UserModel user) {
+    return ProgressModel(
+      userId: user.id,
+      quitDate: user.quitDate ?? DateTime.now(),
+      dailySavings: _calculateDailySavings(user.vapingHistory),
+      achievedMilestones: {},
+      currentStreak: 0,
+      longestStreak: 0,
+      achievements: [],
+    );
+  }
+  
   // Calculate daily savings based on vaping habits
   double _calculateDailySavings(VapingHistoryModel vapingHistory) {
     // Simple calculation based on device type and frequency

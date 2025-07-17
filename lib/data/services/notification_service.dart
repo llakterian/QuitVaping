@@ -36,17 +36,21 @@ class NotificationService {
   }
   
   Future<void> _requestPermissions() async {
+    // Request permissions for Android
     final AndroidFlutterLocalNotificationsPlugin? androidPlugin =
         _notificationsPlugin.resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>();
             
-    await androidPlugin?.requestPermission();
+    if (androidPlugin != null) {
+      await androidPlugin.requestNotificationsPermission();
+    }
     
-    final DarwinFlutterLocalNotificationsPlugin? iOSPlugin =
-        _notificationsPlugin.resolvePlatformSpecificImplementation<
-            DarwinFlutterLocalNotificationsPlugin>();
-            
-    await iOSPlugin?.requestPermissions(
+    // Request permissions for iOS
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    
+    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>()?.requestPermissions(
       alert: true,
       badge: true,
       sound: true,

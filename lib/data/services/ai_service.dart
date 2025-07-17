@@ -153,7 +153,7 @@ class AIService extends ChangeNotifier {
       generatedAt: DateTime.now(),
       type: 'coping_strategy',
       title: 'Managing Your Top Trigger: ${mostCommonTrigger ?? "Unknown"}',
-      content: _getContentForTrigger(mostCommonTrigger),
+      content: _getContentForTrigger(mostCommonTrigger ?? "Unknown"),
       relevanceScore: 0.92,
       triggerContext: mostCommonTrigger,
       actionableSteps: {
@@ -368,12 +368,14 @@ class AIService extends ChangeNotifier {
     final secondHalf = sortedCravings.sublist(midpoint);
     
     // Calculate average intensity for each half
-    final firstAvg = firstHalf.fold(0, (sum, c) => sum + c.intensity) / firstHalf.length;
-    final secondAvg = secondHalf.fold(0, (sum, c) => sum + c.intensity) / secondHalf.length;
+    final firstAvg = firstHalf.isEmpty ? 0 : firstHalf.fold(0, (sum, c) => sum + c.intensity) / firstHalf.length;
+    final secondAvg = secondHalf.isEmpty ? 0 : secondHalf.fold(0, (sum, c) => sum + c.intensity) / secondHalf.length;
     
     // Calculate frequency (cravings per day)
-    final firstDays = firstHalf.last.timestamp.difference(firstHalf.first.timestamp).inDays + 1;
-    final secondDays = secondHalf.last.timestamp.difference(secondHalf.first.timestamp).inDays + 1;
+    final firstDays = firstHalf.isNotEmpty && firstHalf.length > 1 ? 
+        firstHalf.last.timestamp.difference(firstHalf.first.timestamp).inDays + 1 : 1;
+    final secondDays = secondHalf.isNotEmpty && secondHalf.length > 1 ? 
+        secondHalf.last.timestamp.difference(secondHalf.first.timestamp).inDays + 1 : 1;
     
     final firstFreq = firstHalf.length / (firstDays > 0 ? firstDays : 1);
     final secondFreq = secondHalf.length / (secondDays > 0 ? secondDays : 1);

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
+import '../../../data/services/subscription_service.dart';
 import '../../breathing/screens/breathing_screen.dart';
+import '../../subscription/screens/subscription_screen.dart';
+import '../../subscription/widgets/premium_feature_overlay.dart';
 
 class PanicModeScreen extends StatefulWidget {
   const PanicModeScreen({Key? key}) : super(key: key);
@@ -42,6 +46,9 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
   }
 
   Widget _buildTechniqueSelection() {
+    final subscriptionService = Provider.of<SubscriptionService>(context);
+    final isPremium = subscriptionService.isPremium;
+    
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -86,62 +93,141 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
         ...AppConstants.panicModeDistractions.asMap().entries.map((entry) {
           final index = entry.key;
           final technique = entry.value;
+          final isPremiumTechnique = technique['isPremium'] as bool;
+          final isDisabled = isPremiumTechnique && !isPremium;
           
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  _selectedTechniqueIndex = index;
-                });
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Radio<int>(
-                          value: index,
-                          groupValue: _selectedTechniqueIndex,
-                          activeColor: AppColors.primary,
-                          onChanged: (value) {
+            child: Stack(
+              children: [
+                Opacity(
+                  opacity: isDisabled ? 0.6 : 1.0,
+                  child: InkWell(
+                    onTap: isDisabled 
+                        ? null 
+                        : () {
                             setState(() {
-                              _selectedTechniqueIndex = value!;
+                              _selectedTechniqueIndex = index;
                             });
                           },
-                        ),
-                        Expanded(
-                          child: Text(
-                            technique['title'] as String,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Radio<int>(
+                                value: index,
+                                groupValue: _selectedTechniqueIndex,
+                                activeColor: AppColors.primary,
+                                onChanged: isDisabled 
+                                    ? null 
+                                    : (value) {
+                                        setState(() {
+                                          _selectedTechniqueIndex = value!;
+                                        });
+                                      },
+                              ),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        technique['title'] as String,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    if (isPremiumTechnique)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary,
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: const Text(
+                                          'PREMIUM',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '${technique['duration']}s',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 48),
+                            child: Text(
+                              technique['description'] as String,
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                if (isDisabled)
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SubscriptionScreen(),
+                            ),
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.lock,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Unlock Premium',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        Text(
-                          '${technique['duration']}s',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 48),
-                      child: Text(
-                        technique['description'] as String,
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
+                  ),
+              ],
             ),
           );
         }).toList(),
@@ -278,8 +364,21 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
   }
 
   void _startTechnique() {
+    final subscriptionService = Provider.of<SubscriptionService>(context, listen: false);
+    final isPremium = subscriptionService.isPremium;
+    
     final technique = AppConstants.panicModeDistractions[_selectedTechniqueIndex];
+    final isPremiumTechnique = technique['isPremium'] as bool;
     final duration = technique['duration'] as int;
+    
+    // Check if user is trying to use a premium technique without subscription
+    if (isPremiumTechnique && !isPremium) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
+      );
+      return;
+    }
     
     setState(() {
       _isActive = true;
