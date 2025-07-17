@@ -36,8 +36,8 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
-      cardTheme: CardTheme(
-        surfaceTintColor: AppColors.cardBackground,
+      cardTheme: const CardTheme().copyWith(
+        color: AppColors.cardBackground,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -155,8 +155,8 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
-      cardTheme: CardTheme(
-        surfaceTintColor: AppColors.darkCardBackground,
+      cardTheme: const CardTheme().copyWith(
+        color: AppColors.darkCardBackground,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

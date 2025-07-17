@@ -100,14 +100,14 @@ class _BreathingAnimationState extends State<BreathingAnimation>
             height: 200 * _animation.value,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 51),
               border: Border.all(
                 color: color,
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 77),
                   blurRadius: 20 * _animation.value,
                   spreadRadius: 5 * _animation.value,
                 ),
@@ -119,7 +119,7 @@ class _BreathingAnimationState extends State<BreathingAnimation>
                 height: 100 * _animation.value,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: color.withOpacity(0.5),
+                  color: color.withValues(alpha: 128),
                 ),
               ),
             ),

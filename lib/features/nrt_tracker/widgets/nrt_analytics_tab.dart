@@ -8,7 +8,6 @@ import '../../../data/services/nrt_service.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../subscription/widgets/premium_feature_overlay.dart';
-import '../../subscription/screens/subscription_screen.dart';
 
 class NRTAnalyticsTab extends StatelessWidget {
   const NRTAnalyticsTab({Key? key}) : super(key: key);
@@ -368,7 +367,7 @@ class NRTAnalyticsTab extends StatelessWidget {
     ];
     
     final entries = typeDistribution.entries.toList();
-    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + entry.value);
+    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + (entry.value ?? 0));
     
     return PieChart(
       PieChartData(
@@ -401,7 +400,7 @@ class NRTAnalyticsTab extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => entry.value > max ? entry.value.toDouble() : max) * 1.2,
+        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => (entry.value ?? 0) > max ? (entry.value ?? 0).toDouble() : max) * 1.2,
         barTouchData: BarTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
@@ -441,7 +440,7 @@ class NRTAnalyticsTab extends StatelessWidget {
             x: index,
             barRods: [
               BarChartRodData(
-                toY: entry.value.toDouble(),
+                toY: (entry.value ?? 0).toDouble(),
                 color: AppColors.primary,
                 width: 20,
                 borderRadius: const BorderRadius.only(

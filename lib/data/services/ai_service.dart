@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -344,7 +343,7 @@ class AIService extends ChangeNotifier {
   double _calculateAverageIntensity(List<CravingModel> cravings) {
     if (cravings.isEmpty) return 0;
     
-    final sum = cravings.fold(0, (sum, craving) => sum + craving.intensity);
+    final sum = cravings.fold(0, (sum, craving) => sum + (craving.intensity ?? 0));
     return sum / cravings.length;
   }
   

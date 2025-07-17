@@ -16,7 +16,7 @@ class NRTScheduleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final nextStep = schedule.getNextStep();
     final progress = schedule.progressPercentage;
-    final daysElapsed = DateTime.now().difference(schedule.startDate).inDays;
+    final _ = DateTime.now().difference(schedule.startDate).inDays;
     
     // Calculate days remaining in the plan
     int daysRemaining = 0;
@@ -112,7 +112,7 @@ class NRTScheduleCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 26),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -166,7 +166,7 @@ class NRTScheduleCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.1),
+                      color: AppColors.accent.withValues(alpha: 26),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(

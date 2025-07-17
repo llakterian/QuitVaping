@@ -54,8 +54,8 @@ class NRTUsageChart extends StatelessWidget {
       final firstHalf = spots.sublist(0, spots.length ~/ 2);
       final secondHalf = spots.sublist(spots.length ~/ 2);
       
-      final firstAvg = firstHalf.fold(0.0, (sum, spot) => sum + spot.y) / (firstHalf.isEmpty ? 1 : firstHalf.length);
-      final secondAvg = secondHalf.fold(0.0, (sum, spot) => sum + spot.y) / (secondHalf.isEmpty ? 1 : secondHalf.length);
+      final firstAvg = firstHalf.fold(0.0, (sum, spot) => sum + (spot.y ?? 0.0)) / (firstHalf.isEmpty ? 1 : firstHalf.length);
+      final secondAvg = secondHalf.fold(0.0, (sum, spot) => sum + (spot.y ?? 0.0)) / (secondHalf.isEmpty ? 1 : secondHalf.length);
       
       if (secondAvg < firstAvg * 0.9) {
         trend = 'decreasing';

@@ -131,7 +131,7 @@ class HealthMilestoneCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
+            color: AppColors.success.withValues(alpha: 26),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

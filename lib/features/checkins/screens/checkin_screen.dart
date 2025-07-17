@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 import '../../../data/models/craving_model.dart';
-import '../../../data/services/user_service.dart';
-import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
-import '../../subscription/screens/subscription_screen.dart';
-import '../../subscription/widgets/premium_feature_overlay.dart';
 import '../widgets/craving_analytics.dart';
 
 class CheckinScreen extends StatefulWidget {
@@ -292,7 +286,7 @@ class _CheckinScreenState extends State<CheckinScreen> with SingleTickerProvider
       
       try {
         // Create craving model
-        final craving = CravingModel(
+        final _ = CravingModel(
           id: const Uuid().v4(),
           timestamp: DateTime.now(),
           intensity: _intensity,

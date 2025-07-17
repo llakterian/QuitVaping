@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 // Remove Riverpod as we're using Provider
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'app.dart';
 import 'config/env_config.dart';
@@ -15,7 +14,6 @@ import 'data/services/notification_service.dart';
 import 'data/services/nrt_service.dart';
 import 'data/services/subscription_service.dart';
 import 'data/services/ad_service.dart';
-import 'shared/constants/app_constants.dart';
 
 void main() async {
   // Ensure Flutter is initialized

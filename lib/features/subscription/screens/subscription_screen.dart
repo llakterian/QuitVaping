@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:quit_vaping/data/models/subscription_model.dart';
 import 'package:quit_vaping/data/services/subscription_service.dart';
 import 'package:quit_vaping/shared/theme/app_colors.dart';
-import 'package:quit_vaping/shared/theme/app_theme.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({Key? key}) : super(key: key);
@@ -30,6 +28,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               setState(() => _isLoading = true);
               await subscriptionService.restorePurchases();
               setState(() => _isLoading = false);
+              
+              if (!mounted) return;
               
               if (subscriptionService.isPremium) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -165,7 +165,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 26),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -217,7 +217,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             // Feature list
             ...subscriptionFeatures.map((feature) {
               final isPremiumFeature = feature.isPremiumOnly;
-              final isAvailableInFree = freePlan.features.contains(feature.id);
+              final _ = freePlan.features.contains(feature.id);
               
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -286,6 +286,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         final success = await subscriptionService.purchaseSubscription(productDetails);
                         setState(() => _isLoading = false);
                         
+                        if (!mounted) return;
+                        
                         if (!success) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Purchase could not be completed')),
@@ -328,6 +330,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     setState(() => _isLoading = true);
                     final success = await subscriptionService.purchaseSubscription(removeAdsProduct);
                     setState(() => _isLoading = false);
+                    
+                    if (!mounted) return;
                     
                     if (!success) {
                       ScaffoldMessenger.of(context).showSnackBar(

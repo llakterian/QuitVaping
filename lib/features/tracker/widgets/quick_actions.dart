@@ -114,7 +114,7 @@ class QuickActions extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 26),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color),

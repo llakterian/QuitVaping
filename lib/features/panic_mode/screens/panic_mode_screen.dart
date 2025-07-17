@@ -7,7 +7,6 @@ import '../../../shared/constants/app_constants.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../breathing/screens/breathing_screen.dart';
 import '../../subscription/screens/subscription_screen.dart';
-import '../../subscription/widgets/premium_feature_overlay.dart';
 
 class PanicModeScreen extends StatefulWidget {
   const PanicModeScreen({Key? key}) : super(key: key);
@@ -23,7 +22,8 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
   Timer? _timer;
   int _currentStepIndex = 0;
 
-  List<String> get _currentSteps => 
+  // This getter is used in the UI to get the current steps
+  List<String> get _getSteps => 
       AppConstants.panicModeDistractions[_selectedTechniqueIndex]['steps'] as List<String>;
   
   @override
@@ -201,7 +201,7 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
+                              color: Colors.black.withValues(alpha: 179),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Row(
@@ -294,7 +294,7 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 26),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(

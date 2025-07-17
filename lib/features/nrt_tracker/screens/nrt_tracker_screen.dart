@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../data/models/nrt_model.dart';
 import '../../../data/services/nrt_service.dart';
 import '../../../data/services/user_service.dart';
-import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../widgets/nrt_usage_chart.dart';
 import '../widgets/nrt_schedule_card.dart';
@@ -146,7 +144,7 @@ class _UsageLogTab extends StatelessWidget {
                   // Calculate total nicotine for the day
                   final totalNicotine = dateRecords.fold(
                     0.0,
-                    (sum, record) => sum + record.nicotineStrength,
+                    (sum, record) => sum + (record.nicotineStrength ?? 0.0),
                   );
                   
                   return Card(

@@ -160,7 +160,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.primary.withOpacity(0.1),
+          color: AppColors.primary.withValues(alpha: 26),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(text),
@@ -175,7 +175,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 13), // 0.05 * 255 ≈ 13
             blurRadius: 5,
             offset: const Offset(0, -1),
           ),

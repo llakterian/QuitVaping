@@ -6,7 +6,6 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
 import '../widgets/breathing_animation.dart';
 import '../../../data/services/subscription_service.dart';
-import '../../subscription/widgets/premium_feature_overlay.dart';
 import '../../subscription/screens/subscription_screen.dart';
 
 class BreathingScreen extends StatefulWidget {

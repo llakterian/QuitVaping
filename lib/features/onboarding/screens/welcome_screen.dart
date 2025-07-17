@@ -500,7 +500,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           if (_quitDate != null) ...[
             const SizedBox(height: 16),
             Card(
-              color: AppColors.primaryLight.withOpacity(0.1),
+              color: AppColors.primaryLight.withValues(alpha: 26),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
