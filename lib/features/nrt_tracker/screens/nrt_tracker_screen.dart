@@ -161,7 +161,7 @@ class _UsageLogTab extends StatelessWidget {
                             backgroundColor: AppColors.primary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
                             child: const Icon(Icons.medication, color: AppColors.primary),
                           ),
-                          title: Text(record.type.displayName),
+                          title: Text(record.type.toString().split('.').last),
                           subtitle: Text(
                             '${record.nicotineStrength} mg - ${DateFormat.jm().format(record.timestamp)}',
                           ),
@@ -280,12 +280,12 @@ class _ReductionPlanTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       
-                      ...schedule.reductionSteps.asMap().entries.map((entry) {
+                      ...schedule.reductionSteps!.asMap().entries.map((entry) {
                         final index = entry.key;
                         final step = entry.value;
                         final isCompleted = step.targetDate.isBefore(DateTime.now());
                         final isNext = !isCompleted && 
-                            (index == 0 || schedule.reductionSteps[index - 1].targetDate.isBefore(DateTime.now()));
+                            (index == 0 || schedule.reductionSteps![index - 1].targetDate.isBefore(DateTime.now()));
                         
                         return ListTile(
                           leading: CircleAvatar(
@@ -427,7 +427,7 @@ class _AddNRTFormState extends State<_AddNRTForm> {
               items: NRTType.values.map((type) {
                 return DropdownMenuItem(
                   value: type,
-                  child: Text(type.displayName),
+                  child: Text(type.toString().split('.').last),
                 );
               }).toList(),
               onChanged: (value) {

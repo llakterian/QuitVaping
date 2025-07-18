@@ -249,7 +249,7 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const BreathingScreen()),
+              MaterialPageRoute(builder: (context) => BreathingScreen()),
             );
           },
           style: OutlinedButton.styleFrom(

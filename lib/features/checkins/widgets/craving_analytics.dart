@@ -516,7 +516,9 @@ class CravingAnalytics extends StatelessWidget {
     final distribution = <String, int>{};
     
     for (final craving in cravings) {
-      distribution[craving.triggerCategory] = (distribution[craving.triggerCategory] ?? 0) + 1;
+      if (craving.triggerCategory != null) {
+        distribution[craving.triggerCategory!] = (distribution[craving.triggerCategory!] ?? 0) + 1;
+      }
     }
     
     return distribution;

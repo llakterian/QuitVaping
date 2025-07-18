@@ -63,7 +63,7 @@ class QuickActions extends StatelessWidget {
                     AppColors.accent,
                     () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const BreathingScreen()),
+                      MaterialPageRoute(builder: (context) => BreathingScreen()),
                     ),
                   ),
                   const SizedBox(width: 8),

@@ -65,7 +65,6 @@ class NRTService extends ChangeNotifier {
   
   // Record NRT usage
   Future<void> recordNRTUsage({
-    required String userId,
     required NRTType type,
     required double nicotineStrength,
     String? notes,
@@ -76,7 +75,6 @@ class NRTService extends ChangeNotifier {
     try {
       final nrtRecord = NRTModel(
         id: _uuid.v4(),
-        userId: userId,
         type: type,
         nicotineStrength: nicotineStrength,
         timestamp: DateTime.now(),
@@ -98,7 +96,6 @@ class NRTService extends ChangeNotifier {
   
   // Create or update NRT reduction schedule
   Future<void> setNRTSchedule({
-    required String userId,
     required NRTType type,
     required double initialStrength,
     required int frequencyPerDay,
@@ -112,7 +109,6 @@ class NRTService extends ChangeNotifier {
     try {
       final schedule = NRTScheduleModel(
         id: _nrtSchedule?.id ?? _uuid.v4(),
-        userId: userId,
         type: type,
         initialStrength: initialStrength,
         currentStrength: initialStrength,
