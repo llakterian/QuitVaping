@@ -14,14 +14,14 @@ class NRTScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nextStep = schedule.getNextStep();
-    final progress = schedule.progressPercentage;
-    final _ = DateTime.now().difference(schedule.startDate).inDays;
+    final nextStep = schedule.reductionSteps!.firstWhere((step) => !step.isCompleted, orElse: () => schedule.reductionSteps!.last);
+    final progress = schedule.currentStrength! / schedule.initialStrength!;
+    final _ = DateTime.now().difference(schedule.startDate!).inDays;
     
     // Calculate days remaining in the plan
     int daysRemaining = 0;
-    if (schedule.reductionSteps.isNotEmpty) {
-      final lastStepDate = schedule.reductionSteps.last.targetDate;
+    if (schedule.reductionSteps!.isNotEmpty) {
+      final lastStepDate = schedule.reductionSteps!.last.targetDate;
       daysRemaining = lastStepDate.difference(DateTime.now()).inDays;
       if (daysRemaining < 0) daysRemaining = 0;
     }
@@ -81,7 +81,7 @@ class NRTScheduleCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Started ${DateFormat.yMMMd().format(schedule.startDate)}',
+                      'Started ${DateFormat.yMMMd().format(schedule.startDate!)}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -135,7 +135,7 @@ class NRTScheduleCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${schedule.recommendedStrength} mg ${schedule.type.displayName}',
+                        '${schedule.initialStrength} mg ${schedule.type.toString().split('.').last}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class NRTScheduleCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${nextStep.nicotineStrength} mg ${schedule.type.displayName}',
+                          '${nextStep.nicotineStrength} mg ${schedule.type.toString().split('.').last}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

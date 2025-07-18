@@ -459,7 +459,7 @@ class NRTAnalyticsTab extends StatelessWidget {
     final distribution = <NRTType, int>{};
     
     for (final record in usage) {
-      distribution[record.type] = (distribution[record.type] ?? 0) + 1;
+      distribution[record.type.toString().split('.').last] = (distribution[record.type.toString().split('.').last] ?? 0) + 1;
     }
     
     return distribution;
@@ -536,6 +536,6 @@ class NRTAnalyticsTab extends StatelessWidget {
       }
     });
     
-    return mostUsedType?.displayName ?? 'None';
+    return mostUsedType?.toString().split('.').last ?? 'None';
   }
 }

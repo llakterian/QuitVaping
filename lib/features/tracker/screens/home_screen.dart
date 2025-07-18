@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const _HomeTab(),
       const CheckinScreen(),
       const AIChatScreen(),
-      const BreathingScreen(),
+      BreathingScreen(),
       const NRTTrackerScreen(),
     ]);
   }
