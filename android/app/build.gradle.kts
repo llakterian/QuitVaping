@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.example.quit_vaping"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "27.0.12077973"  // Fixed NDK version
+    ndkVersion = flutter.ndkVersion  // Using Flutter default NDK version
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
