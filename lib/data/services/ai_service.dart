@@ -343,7 +343,7 @@ class AIService extends ChangeNotifier {
   double _calculateAverageIntensity(List<CravingModel> cravings) {
     if (cravings.isEmpty) return 0;
     
-    final sum = cravings.fold(0, (sum, craving) => sum + (craving.intensity == null ? 0 : craving.intensity as int));
+    final sum = cravings.fold(0, (sum, craving) => sum + (craving.intensity == null ? 0 : craving.intensity));
     return sum / cravings.length;
   }
   
@@ -367,8 +367,8 @@ class AIService extends ChangeNotifier {
     final secondHalf = sortedCravings.sublist(midpoint);
     
     // Calculate average intensity for each half
-    final firstAvg = firstHalf.isEmpty ? 0 : firstHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity as int)) / firstHalf.length;
-    final secondAvg = secondHalf.isEmpty ? 0 : secondHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity as int)) / secondHalf.length;
+    final firstAvg = firstHalf.isEmpty ? 0 : firstHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity)) / firstHalf.length;
+    final secondAvg = secondHalf.isEmpty ? 0 : secondHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity)) / secondHalf.length;
     
     // Calculate frequency (cravings per day)
     final firstDays = firstHalf.isNotEmpty && firstHalf.length > 1 ? 
