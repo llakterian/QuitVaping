@@ -76,7 +76,7 @@ class SubscriptionService with ChangeNotifier {
     _subscription = _inAppPurchase.purchaseStream.listen(
       _handlePurchaseUpdates,
       onDone: () => _subscription?.cancel(),
-      onError: (error) => print('Purchase error: $error'),
+      onError: (error) => debugPrint('Purchase error: $error'),
     );
 
     // Load product details
@@ -120,7 +120,7 @@ class SubscriptionService with ChangeNotifier {
     final response = await _inAppPurchase.queryProductDetails(productIds);
     
     if (response.error != null) {
-      print('Error loading products: ${response.error}');
+      debugPrint('Error loading products: ${response.error}');
       return;
     }
     
@@ -134,7 +134,7 @@ class SubscriptionService with ChangeNotifier {
         // Show pending UI
       } else if (purchaseDetails.status == PurchaseStatus.error) {
         // Handle error
-        print('Purchase error: ${purchaseDetails.error}');
+        debugPrint('Purchase error: ${purchaseDetails.error}');
       } else if (purchaseDetails.status == PurchaseStatus.purchased || 
                 purchaseDetails.status == PurchaseStatus.restored) {
         // Grant entitlement for the purchased product
@@ -190,7 +190,7 @@ class SubscriptionService with ChangeNotifier {
       final purchaseParam = PurchaseParam(productDetails: product);
       return await _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
     } catch (e) {
-      print('Error purchasing subscription: $e');
+      debugPrint('Error purchasing subscription: $e');
       return false;
     }
   }
@@ -199,7 +199,7 @@ class SubscriptionService with ChangeNotifier {
     try {
       await _inAppPurchase.restorePurchases();
     } catch (e) {
-      print('Error restoring purchases: $e');
+      debugPrint('Error restoring purchases: $e');
     }
   }
 

@@ -52,49 +52,20 @@ class _BreathingScreenState extends State<BreathingScreen> {
     
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Choose an Exercise',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 16),
-                
-                ...AppConstants.breathingExercises.entries.map((entry) {
-                  final key = entry.key;
-                  final exercise = entry.value;
-                  final isSelected = _selectedExercise == key;
-                  final isPremiumExercise = exercise['isPremium'] as bool;
-                  
-                  return Stack(
-                    children: [
-                      RadioListTile<String>(
-                        title: Row(
-                          children: [
-                            Text(exercise['name'] as String),
-                            if (isPremiumExercise)
-                              Container(
-                                margin: const EdgeInsets.only(left: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text(
-                                  'PREMIUM',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                          ],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
                         ),
                         subtitle: Text(exercise['description'] as String),
                         value: key,
@@ -142,32 +113,20 @@ class _BreathingScreenState extends State<BreathingScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Duration',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 16),
-                
-                Wrap(
-                  spacing: 8,
-                  children: [1, 2, 3, 5, 10].map((minutes) {
-                    final isSelected = _duration == minutes;
-                    
-                    return ChoiceChip(
-                      label: Text('$minutes min'),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        if (selected) {
-                          setState(() {
-                            _duration = minutes;
-                          });
-                        }
-                      },
-                    );
-                  }).toList(),
-                ),
-              ],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
             ),
           ),
         ),
@@ -179,25 +138,20 @@ class _BreathingScreenState extends State<BreathingScreen> {
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Benefits',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                
-                Text(
-                  AppConstants.breathingExercises[_selectedExercise]?['benefits'] as String,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                
-                const SizedBox(height: 16),
-                
-                const Text(
-                  'Regular breathing exercises can help reduce stress, anxiety, and cravings. They also improve focus and promote relaxation.',
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
             ),
           ),
         ),
@@ -236,50 +190,40 @@ class _BreathingScreenState extends State<BreathingScreen> {
     }
     
     return Column(
-      children: [
-        // Timer bar
-        LinearProgressIndicator(
-          value: _remainingSeconds / (_duration * 60),
-          backgroundColor: Colors.grey[300],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
           valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
         ),
         
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _formatTime(_remainingSeconds),
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 32),
-              
-              // Breathing animation
-              BreathingAnimation(
-                action: action,
-                duration: seconds,
-              ),
-              
-              const SizedBox(height: 32),
-              
-              Text(
-                action.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: actionColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                instruction,
-                style: const TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
           ),
         ),
         
@@ -371,23 +315,20 @@ class _BreathingScreenState extends State<BreathingScreen> {
         title: const Text('Exercise Complete'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.check_circle,
-              color: AppColors.success,
-              size: 64,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Great job! You completed a $_duration-minute ${AppConstants.breathingExercises[_selectedExercise]?['name']} exercise.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'How do you feel now?',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+                  children: [
+                    for (int i = 0; i < _exercises.length; i++)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: ChoiceChip(
+                          label: Text(_exercises[i].name),
+                          selected: _selectedExercise == i,
+                          onSelected: (_) => setState(() {
+                            _selectedExercise = i;
+                            _duration = _exercises[i].defaultDuration;
+                          }),
+                        ),
+                      ),
+                  ],
         ),
         actions: [
           TextButton(

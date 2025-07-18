@@ -1,68 +1,77 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:uuid/uuid.dart';
 
-part 'craving_model.g.dart';
-part 'craving_model.freezed.dart';
+class CravingModel {
+  final String id;
+  final DateTime timestamp;
+  final int intensity; // Make this non-nullable
+  final String? trigger;
+  final String? location;
+  final String? activity;
+  final String? emotion;
+  final String? notes;
+  final bool resolved;
 
-@freezed
-class CravingModel with _$CravingModel {
-  const CravingModel._();
-  
-  const factory CravingModel({
-    required String id,
-    required DateTime timestamp,
-    required int intensity, // 1-10 scale
-    required String triggerCategory, // emotional, social, environmental, physical
-    String? specificTrigger,
+  CravingModel({
+    String? id,
+    required this.timestamp,
+    required this.intensity,
+    this.trigger,
+    this.location,
+    this.activity,
+    this.emotion,
+    this.notes,
+    this.resolved = false,
+  }) : id = id ?? const Uuid().v4();
+
+  factory CravingModel.fromJson(Map<String, dynamic> json) {
+    return CravingModel(
+      id: json['id'],
+      timestamp: DateTime.parse(json['timestamp']),
+      intensity: json['intensity'] ?? 0, // Provide default value
+      trigger: json['trigger'],
+      location: json['location'],
+      activity: json['activity'],
+      emotion: json['emotion'],
+      notes: json['notes'],
+      resolved: json['resolved'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'timestamp': timestamp.toIso8601String(),
+      'intensity': intensity,
+      'trigger': trigger,
+      'location': location,
+      'activity': activity,
+      'emotion': emotion,
+      'notes': notes,
+      'resolved': resolved,
+    };
+  }
+
+  CravingModel copyWith({
+    String? id,
+    DateTime? timestamp,
+    int? intensity,
+    String? trigger,
     String? location,
     String? activity,
     String? emotion,
-    int? duration, // in minutes
-    String? copingStrategy,
-    required bool resolved,
     String? notes,
-    Map<String, dynamic>? aiInsights,
-  }) = _CravingModel;
-
-  factory CravingModel.fromJson(Map<String, dynamic> json) => _$CravingModelFromJson(json);
-  
-  // Helper method to categorize craving intensity
-  String get intensityCategory {
-    if (intensity <= 3) {
-      return 'Mild';
-    } else if (intensity <= 7) {
-      return 'Moderate';
-    } else {
-      return 'Severe';
-    }
+    bool? resolved,
+  }) {
+    return CravingModel(
+      id: id ?? this.id,
+      timestamp: timestamp ?? this.timestamp,
+      intensity: intensity ?? this.intensity,
+      trigger: trigger ?? this.trigger,
+      location: location ?? this.location,
+      activity: activity ?? this.activity,
+      emotion: emotion ?? this.emotion,
+      notes: notes ?? this.notes,
+      resolved: resolved ?? this.resolved,
+    );
   }
-
-  // Helper method to get time of day
-  String get timeOfDay {
-    final hour = timestamp.hour;
-    
-    if (hour >= 5 && hour < 12) {
-      return 'Morning';
-    } else if (hour >= 12 && hour < 17) {
-      return 'Afternoon';
-    } else if (hour >= 17 && hour < 21) {
-      return 'Evening';
-    } else {
-      return 'Night';
-    }
-  }
-}
-
-@freezed
-class CravingInsightModel with _$CravingInsightModel {
-  const factory CravingInsightModel({
-    required String id,
-    required DateTime generatedAt,
-    required String insightType, // pattern, trigger, time, location, etc.
-    required String description,
-    required double confidenceScore, // 0.0 to 1.0
-    required Map<String, dynamic> supportingData,
-    List<String>? recommendedStrategies,
-  }) = _CravingInsightModel;
-
-  factory CravingInsightModel.fromJson(Map<String, dynamic> json) => _$CravingInsightModelFromJson(json);
 }

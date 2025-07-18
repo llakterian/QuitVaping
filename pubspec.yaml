@@ -1,6 +1,6 @@
 name: quit_vaping
 description: AI-powered app to help users quit vaping through personalized tracking and support.
-version: 1.0.0+2  # Format
+version: 1.0.0+14  # Format
 publish_to: 'none'
 
 environment:

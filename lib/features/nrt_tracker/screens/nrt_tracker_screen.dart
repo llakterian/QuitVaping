@@ -144,7 +144,7 @@ class _UsageLogTab extends StatelessWidget {
                   // Calculate total nicotine for the day
                   final totalNicotine = dateRecords.fold(
                     0.0,
-                    (sum, record) => sum + (record.nicotineStrength ?? 0.0),
+                    (sum, record) => sum + (record.nicotineStrength == null ? 0.0 : record.nicotineStrength as double),
                   );
                   
                   return Card(

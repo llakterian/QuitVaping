@@ -1,3 +1,9 @@
+import 'dart:developer' as dev;
+import 'dart:developer' as dev;
+import 'dart:developer' as dev;
+import 'dart:developer' as dev;
+import 'dart:developer' as dev;
+import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -102,7 +108,7 @@ class AdService {
 
   Future<void> showInterstitialAd() async {
     if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      dev.log('Warning: attempt to show interstitial before loaded.');
       return;
     }
     
@@ -123,7 +129,7 @@ class AdService {
 
   Future<void> showRewardedAd({required Function onRewarded}) async {
     if (_rewardedAd == null) {
-      print('Warning: attempt to show rewarded ad before loaded.');
+      dev.log('Warning: attempt to show rewarded ad before loaded.');
       return;
     }
     
@@ -152,13 +158,13 @@ class AdService {
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
-        onAdLoaded: (Ad ad) => print('Ad loaded.'),
+        onAdLoaded: (Ad ad) => dev.log('Ad loaded.'),
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           ad.dispose();
-          print('Ad failed to load: $error');
+          dev.log('Ad failed to load: $error');
         },
-        onAdOpened: (Ad ad) => print('Ad opened.'),
-        onAdClosed: (Ad ad) => print('Ad closed.'),
+        onAdOpened: (Ad ad) => dev.log('Ad opened.'),
+        onAdClosed: (Ad ad) => dev.log('Ad closed.'),
       ),
     );
   }

@@ -9,7 +9,7 @@ import 'storage_service.dart';
 class NRTService extends ChangeNotifier {
   static const String _nrtBoxName = 'nrt_box';
   
-  final StorageService _storageService;
+  final StorageService _storageService; // Used for persistence
   final _uuid = Uuid();
   
   List<NRTModel> _nrtUsage = [];
@@ -236,7 +236,7 @@ class NRTService extends ChangeNotifier {
     // Calculate daily totals
     final List<double> dailyTotals = [];
     usageByDay.forEach((day, records) {
-      final total = records.fold(0.0, (sum, record) => sum + (record.nicotineStrength ?? 0.0));
+      final total = records.fold(0.0, (sum, record) => sum + (record.nicotineStrength == null ? 0.0 : record.nicotineStrength as double));
       dailyTotals.add(total);
     });
     

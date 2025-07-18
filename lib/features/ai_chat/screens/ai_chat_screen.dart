@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../data/services/ai_service.dart';
 import '../../../data/services/subscription_service.dart';
-import '../../../data/models/ai_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../widgets/chat_message.dart';
 import '../../subscription/widgets/premium_feature_overlay.dart';

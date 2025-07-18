@@ -1,262 +1,153 @@
-class NRTModel {
+import 'package:uuid/uuid.dart';
+
+class NRTRecord {
   final String id;
-  final String userId;
-  final NRTType type;
-  final double nicotineStrength; // in mg
   final DateTime timestamp;
+  final String type;
+  final double nicotineStrength; // Make this non-nullable
   final String? notes;
 
-  NRTModel({
-    required this.id,
-    required this.userId,
+  NRTRecord({
+    String? id,
+    required this.timestamp,
     required this.type,
     required this.nicotineStrength,
-    required this.timestamp,
     this.notes,
-  });
+  }) : id = id ?? const Uuid().v4();
 
-  factory NRTModel.fromJson(Map<String, dynamic> json) {
-    return NRTModel(
-      id: json['id'] as String,
-      userId: json['user_id'] as String,
-      type: NRTType.values.firstWhere(
-        (e) => e.toString() == 'NRTType.${json['type']}',
-        orElse: () => NRTType.other,
-      ),
-      nicotineStrength: json['nicotine_strength'] as double,
+  factory NRTRecord.fromJson(Map<String, dynamic> json) {
+    return NRTRecord(
+      id: json['id'],
       timestamp: DateTime.parse(json['timestamp']),
-      notes: json['notes'] as String?,
+      type: json['type'],
+      nicotineStrength: json['nicotineStrength'] ?? 0.0, // Provide default value
+      notes: json['notes'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_id': userId,
-      'type': type.toString().split('.').last,
-      'nicotine_strength': nicotineStrength,
       'timestamp': timestamp.toIso8601String(),
+      'type': type,
+      'nicotineStrength': nicotineStrength,
       'notes': notes,
     };
   }
 
-  NRTModel copyWith({
+  NRTRecord copyWith({
     String? id,
-    String? userId,
-    NRTType? type,
-    double? nicotineStrength,
     DateTime? timestamp,
+    String? type,
+    double? nicotineStrength,
     String? notes,
   }) {
-    return NRTModel(
+    return NRTRecord(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
+      timestamp: timestamp ?? this.timestamp,
       type: type ?? this.type,
       nicotineStrength: nicotineStrength ?? this.nicotineStrength,
-      timestamp: timestamp ?? this.timestamp,
       notes: notes ?? this.notes,
     );
   }
 }
 
-class NRTScheduleModel {
+class NRTSchedule {
   final String id;
-  final String userId;
-  final NRTType type;
-  final double initialStrength; // in mg
-  final double currentStrength; // in mg
-  final int frequencyPerDay;
-  final DateTime startDate;
-  final List<NRTStepModel> reductionSteps;
-  final String? notes;
+  final String name;
+  final List<NRTScheduleItem> items;
+  final bool isActive;
 
-  NRTScheduleModel({
-    required this.id,
-    required this.userId,
-    required this.type,
-    required this.initialStrength,
-    required this.currentStrength,
-    required this.frequencyPerDay,
-    required this.startDate,
-    required this.reductionSteps,
-    this.notes,
-  });
+  NRTSchedule({
+    String? id,
+    required this.name,
+    required this.items,
+    this.isActive = false,
+  }) : id = id ?? const Uuid().v4();
 
-  factory NRTScheduleModel.fromJson(Map<String, dynamic> json) {
-    return NRTScheduleModel(
-      id: json['id'] as String,
-      userId: json['user_id'] as String,
-      type: NRTType.values.firstWhere(
-        (e) => e.toString() == 'NRTType.${json['type']}',
-        orElse: () => NRTType.other,
-      ),
-      initialStrength: json['initial_strength'] as double,
-      currentStrength: json['current_strength'] as double,
-      frequencyPerDay: json['frequency_per_day'] as int,
-      startDate: DateTime.parse(json['start_date']),
-      reductionSteps: (json['reduction_steps'] as List)
-          .map((e) => NRTStepModel.fromJson(e as Map<String, dynamic>))
+  factory NRTSchedule.fromJson(Map<String, dynamic> json) {
+    return NRTSchedule(
+      id: json['id'],
+      name: json['name'],
+      items: (json['items'] as List)
+          .map((item) => NRTScheduleItem.fromJson(item))
           .toList(),
-      notes: json['notes'] as String?,
+      isActive: json['isActive'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'user_id': userId,
-      'type': type.toString().split('.').last,
-      'initial_strength': initialStrength,
-      'current_strength': currentStrength,
-      'frequency_per_day': frequencyPerDay,
-      'start_date': startDate.toIso8601String(),
-      'reduction_steps': reductionSteps.map((e) => e.toJson()).toList(),
-      'notes': notes,
+      'name': name,
+      'items': items.map((item) => item.toJson()).toList(),
+      'isActive': isActive,
     };
   }
 
-  NRTScheduleModel copyWith({
+  NRTSchedule copyWith({
     String? id,
-    String? userId,
-    NRTType? type,
-    double? initialStrength,
-    double? currentStrength,
-    int? frequencyPerDay,
-    DateTime? startDate,
-    List<NRTStepModel>? reductionSteps,
-    String? notes,
+    String? name,
+    List<NRTScheduleItem>? items,
+    bool? isActive,
   }) {
-    return NRTScheduleModel(
+    return NRTSchedule(
       id: id ?? this.id,
-      userId: userId ?? this.userId,
-      type: type ?? this.type,
-      initialStrength: initialStrength ?? this.initialStrength,
-      currentStrength: currentStrength ?? this.currentStrength,
-      frequencyPerDay: frequencyPerDay ?? this.frequencyPerDay,
-      startDate: startDate ?? this.startDate,
-      reductionSteps: reductionSteps ?? this.reductionSteps,
-      notes: notes ?? this.notes,
+      name: name ?? this.name,
+      items: items ?? this.items,
+      isActive: isActive ?? this.isActive,
     );
-  }
-  
-  // Calculate the next step in the reduction plan
-  NRTStepModel? getNextStep() {
-    final now = DateTime.now();
-    
-    for (final step in reductionSteps) {
-      if (step.targetDate.isAfter(now)) {
-        return step;
-      }
-    }
-    
-    return null; // No more steps, plan completed
-  }
-  
-  // Calculate progress percentage through the entire plan
-  double get progressPercentage {
-    if (reductionSteps.isEmpty) return 1.0;
-    
-    final now = DateTime.now();
-    final totalDuration = reductionSteps.last.targetDate.difference(startDate).inDays;
-    
-    if (totalDuration <= 0) return 1.0;
-    
-    final elapsedDuration = now.difference(startDate).inDays;
-    
-    return (elapsedDuration / totalDuration).clamp(0.0, 1.0);
-  }
-  
-  // Calculate the current recommended nicotine strength
-  double get recommendedStrength {
-    final now = DateTime.now();
-    double strength = initialStrength;
-    
-    for (final step in reductionSteps) {
-      if (step.targetDate.isBefore(now)) {
-        strength = step.nicotineStrength;
-      } else {
-        break;
-      }
-    }
-    
-    return strength;
   }
 }
 
-class NRTStepModel {
-  final DateTime targetDate;
-  final double nicotineStrength; // in mg
-  final int frequencyPerDay;
+class NRTScheduleItem {
+  final String id;
+  final String type;
+  final double nicotineStrength;
+  final String timeOfDay;
+  final bool isCompleted;
 
-  NRTStepModel({
-    required this.targetDate,
+  NRTScheduleItem({
+    String? id,
+    required this.type,
     required this.nicotineStrength,
-    required this.frequencyPerDay,
-  });
+    required this.timeOfDay,
+    this.isCompleted = false,
+  }) : id = id ?? const Uuid().v4();
 
-  factory NRTStepModel.fromJson(Map<String, dynamic> json) {
-    return NRTStepModel(
-      targetDate: DateTime.parse(json['target_date']),
-      nicotineStrength: json['nicotine_strength'] as double,
-      frequencyPerDay: json['frequency_per_day'] as int,
+  factory NRTScheduleItem.fromJson(Map<String, dynamic> json) {
+    return NRTScheduleItem(
+      id: json['id'],
+      type: json['type'],
+      nicotineStrength: json['nicotineStrength'] ?? 0.0,
+      timeOfDay: json['timeOfDay'],
+      isCompleted: json['isCompleted'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'target_date': targetDate.toIso8601String(),
-      'nicotine_strength': nicotineStrength,
-      'frequency_per_day': frequencyPerDay,
+      'id': id,
+      'type': type,
+      'nicotineStrength': nicotineStrength,
+      'timeOfDay': timeOfDay,
+      'isCompleted': isCompleted,
     };
   }
-}
 
-enum NRTType {
-  patch,
-  gum,
-  lozenge,
-  inhaler,
-  spray,
-  mint,
-  other
-}
-
-extension NRTTypeExtension on NRTType {
-  String get displayName {
-    switch (this) {
-      case NRTType.patch:
-        return 'Nicotine Patch';
-      case NRTType.gum:
-        return 'Nicotine Gum';
-      case NRTType.lozenge:
-        return 'Nicotine Lozenge';
-      case NRTType.inhaler:
-        return 'Nicotine Inhaler';
-      case NRTType.spray:
-        return 'Nicotine Spray';
-      case NRTType.mint:
-        return 'Nicotine Mint';
-      case NRTType.other:
-        return 'Other NRT';
-    }
-  }
-  
-  String get icon {
-    switch (this) {
-      case NRTType.patch:
-        return 'assets/images/nrt/patch.png';
-      case NRTType.gum:
-        return 'assets/images/nrt/gum.png';
-      case NRTType.lozenge:
-        return 'assets/images/nrt/lozenge.png';
-      case NRTType.inhaler:
-        return 'assets/images/nrt/inhaler.png';
-      case NRTType.spray:
-        return 'assets/images/nrt/spray.png';
-      case NRTType.mint:
-        return 'assets/images/nrt/mint.png';
-      case NRTType.other:
-        return 'assets/images/nrt/other.png';
-    }
+  NRTScheduleItem copyWith({
+    String? id,
+    String? type,
+    double? nicotineStrength,
+    String? timeOfDay,
+    bool? isCompleted,
+  }) {
+    return NRTScheduleItem(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      nicotineStrength: nicotineStrength ?? this.nicotineStrength,
+      timeOfDay: timeOfDay ?? this.timeOfDay,
+      isCompleted: isCompleted ?? this.isCompleted,
+    );
   }
 }

@@ -32,10 +32,12 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               if (!mounted) return;
               
               if (subscriptionService.isPremium) {
+      if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Subscription restored successfully!')),
                 );
               } else {
+      if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('No previous subscription found')),
                 );
@@ -289,11 +291,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         if (!mounted) return;
                         
                         if (!success) {
+      if (!mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Purchase could not be completed')),
                           );
                         }
                       } else {
+      if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Product not available')),
                         );
@@ -334,11 +338,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     if (!mounted) return;
                     
                     if (!success) {
+      if (!mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Purchase could not be completed')),
                       );
                     }
                   } else {
+      if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Product not available')),
                     );

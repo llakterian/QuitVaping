@@ -7,7 +7,6 @@ import '../../../data/services/user_service.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../subscription/widgets/premium_feature_overlay.dart';
-import '../../subscription/screens/subscription_screen.dart';
 
 class CravingAnalytics extends StatelessWidget {
   const CravingAnalytics({Key? key}) : super(key: key);
@@ -27,7 +26,7 @@ class CravingAnalytics extends StatelessWidget {
   }
   
   Widget _buildPremiumAnalytics(BuildContext context) {
-    final userService = Provider.of<UserService>(context);
+    final _ = Provider.of<UserService>(context); // Unused = Provider.of<UserService>(context);
     // In a real app, we would get the cravings from the user service
     // For this example, we'll use mock data
     final cravings = _getMockCravings();
@@ -362,7 +361,7 @@ class CravingAnalytics extends StatelessWidget {
     ];
     
     final entries = triggerDistribution.entries.toList();
-    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + (entry.value ?? 0));
+    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + (entry.value == null ? 0 : entry.value as int));
     
     return PieChart(
       PieChartData(
@@ -395,7 +394,7 @@ class CravingAnalytics extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => (entry.value ?? 0) > max ? (entry.value ?? 0).toDouble() : max) * 1.2,
+        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => (entry.value ?? 0) > max ? (entry.value == null ? 0.0 : (entry.value as int).toDouble()) : max) * 1.2,
         barTouchData: BarTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(

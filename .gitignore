@@ -76,3 +76,14 @@ firebase_options.dart
 # Deployment files
 /deploy/
 /dist/
+# Utility scripts
+/.scripts/
+
+# Backup directories
+/android_backup_*/
+
+# Generated assets
+/play_store_assets/
+
+# Temporary files
+*.zip

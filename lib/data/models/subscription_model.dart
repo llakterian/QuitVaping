@@ -5,7 +5,7 @@ part 'subscription_model.g.dart';
 
 @freezed
 class SubscriptionFeature with _$SubscriptionFeature {
-  const factory SubscriptionFeature({
+  factory SubscriptionFeature({
     required String id,
     required String name,
     required String description,
@@ -18,7 +18,7 @@ class SubscriptionFeature with _$SubscriptionFeature {
 
 @freezed
 class SubscriptionPlan with _$SubscriptionPlan {
-  const factory SubscriptionPlan({
+  factory SubscriptionPlan({
     required String id,
     required String name,
     required String description,

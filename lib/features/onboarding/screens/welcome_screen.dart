@@ -25,8 +25,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   int _nicotineStrength = 20;
   double _yearsVaping = 2.0;
   String _deviceType = 'Pod System';
-  List<String> _selectedTriggers = [];
-  List<String> _selectedMotivations = [];
+  final List<String> _selectedTriggers = [];
+  final List<String> _selectedMotivations = [];
   DateTime? _quitDate;
 
   @override
