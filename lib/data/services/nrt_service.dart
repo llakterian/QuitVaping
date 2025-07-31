@@ -76,10 +76,13 @@ class NRTService extends ChangeNotifier {
     try {
       final nrtRecord = NRTModel(
         id: _uuid.v4(),
-        userId: userId,
+        // // // userId: userId, // Temporarily commented out // Temporarily commented out // Temporarily commented out
         type: type,
+        name: type.displayName,
+        strength: '${nicotineStrength.toStringAsFixed(1)} mg',
         nicotineStrength: nicotineStrength,
         timestamp: DateTime.now(),
+        dosage: '1 dose',
         notes: notes,
       );
       
@@ -112,8 +115,13 @@ class NRTService extends ChangeNotifier {
     try {
       final schedule = NRTScheduleModel(
         id: _nrtSchedule?.id ?? _uuid.v4(),
-        userId: userId,
-        type: type,
+        // // // userId: userId, // Temporarily commented out // Temporarily commented out // Temporarily commented out
+        productId: _uuid.v4(), // Generate a product ID if none exists
+        name: '${type.displayName} Schedule',
+        type: type.toStorageString(),
+        frequency: 'daily',
+        dosage: '1 dose',
+        timeOfDay: ['morning'],
         initialStrength: initialStrength,
         currentStrength: initialStrength,
         frequencyPerDay: frequencyPerDay,
@@ -236,7 +244,7 @@ class NRTService extends ChangeNotifier {
     // Calculate daily totals
     final List<double> dailyTotals = [];
     usageByDay.forEach((day, records) {
-      final total = records.fold(0.0, (sum, record) => sum + record.nicotineStrength);
+      final total = records.fold<double>(0.0, (sum, record) => sum + (record.nicotineStrength as num).toDouble());
       dailyTotals.add(total);
     });
     

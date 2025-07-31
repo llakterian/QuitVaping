@@ -17,9 +17,21 @@ class NRTUsageChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Group by date and calculate daily totals
+    // Get data for the chart
     final Map<DateTime, double> dailyTotals = {};
+    final now = DateTime.now();
     
+    // Initialize all days with zero
+    for (int i = 0; i < daysToShow; i++) {
+      final date = DateTime(
+        now.year,
+        now.month,
+        now.day - i,
+      );
+      dailyTotals[date] = 0;
+    }
+    
+    // Add up nicotine usage by day
     for (final record in usage) {
       final date = DateTime(
         record.timestamp.year,
@@ -27,266 +39,173 @@ class NRTUsageChart extends StatelessWidget {
         record.timestamp.day,
       );
       
-      dailyTotals[date] = (dailyTotals[date] ?? 0) + record.nicotineStrength;
-    }
-    
-    // Get the last 'daysToShow' days
-    final now = DateTime.now();
-    final dates = List.generate(
-      daysToShow,
-      (index) => DateTime(
-        now.year,
-        now.month,
-        now.day - index,
-      ),
-    ).reversed.toList();
-    
-    // Create data points
-    final spots = dates.map((date) {
-      final x = dates.indexOf(date).toDouble();
-      final y = dailyTotals[date] ?? 0.0;
-      return FlSpot(x, y);
-    }).toList();
-    
-    // Calculate trend
-    String trend = 'stable';
-    if (spots.length > 2) {
-      final firstHalf = spots.sublist(0, spots.length ~/ 2);
-      final secondHalf = spots.sublist(spots.length ~/ 2);
-      
-      final firstAvg = firstHalf.fold(0.0, (sum, spot) => sum + (spot.y ?? 0.0)) / (firstHalf.isEmpty ? 1 : firstHalf.length);
-      final secondAvg = secondHalf.fold(0.0, (sum, spot) => sum + (spot.y ?? 0.0)) / (secondHalf.isEmpty ? 1 : secondHalf.length);
-      
-      if (secondAvg < firstAvg * 0.9) {
-        trend = 'decreasing';
-      } else if (secondAvg > firstAvg * 1.1) {
-        trend = 'increasing';
+      // Only include days within our range
+      final difference = now.difference(date).inDays;
+      if (difference >= 0 && difference < daysToShow) {
+        dailyTotals[date] = (dailyTotals[date] ?? 0) + record.nicotineStrength;
       }
     }
     
-    // Get trend color
-    Color trendColor;
-    IconData trendIcon;
-    String trendText;
+    // Sort dates
+    final sortedDates = dailyTotals.keys.toList()
+      ..sort((a, b) => a.compareTo(b));
     
-    switch (trend) {
-      case 'decreasing':
-        trendColor = AppColors.success;
-        trendIcon = Icons.trending_down;
-        trendText = 'Decreasing';
-        break;
-      case 'increasing':
-        trendColor = AppColors.error;
-        trendIcon = Icons.trending_up;
-        trendText = 'Increasing';
-        break;
-      default:
-        trendColor = AppColors.warning;
-        trendIcon = Icons.trending_flat;
-        trendText = 'Stable';
+    // Create bar chart data
+    final barGroups = <BarChartGroupData>[];
+    
+    for (int i = 0; i < sortedDates.length; i++) {
+      final date = sortedDates[i];
+      final value = dailyTotals[date] ?? 0;
+      
+      barGroups.add(
+        BarChartGroupData(
+          x: i,
+          barRods: [
+            BarChartRodData(
+              toY: value,
+              color: AppColors.primary,
+              width: 16,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(4),
+                topRight: Radius.circular(4),
+              ),
+            ),
+          ],
+        ),
+      );
     }
     
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Nicotine Intake',
-                  style: Theme.of(context).textTheme.titleLarge,
+    return Column(
+      children: [
+        Expanded(
+          child: BarChart(
+            BarChartData(
+              alignment: BarChartAlignment.spaceAround,
+              maxY: _getMaxY(dailyTotals.values.toList()),
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Colors.blueGrey.shade800,
+                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    final date = sortedDates[group.x.toInt()];
+                    return BarTooltipItem(
+                      '${DateFormat('MMM d').format(date)}\n',
+                      const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: '${rod.toY.toStringAsFixed(1)} mg',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
-                Row(
-                  children: [
-                    Icon(trendIcon, color: trendColor, size: 16),
-                    const SizedBox(width: 4),
-                    Text(
-                      trendText,
-                      style: TextStyle(color: trendColor),
-                    ),
-                  ],
+              ),
+              titlesData: FlTitlesData(
+                show: true,
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: (value, meta) {
+                      if (value >= 0 && value < sortedDates.length) {
+                        final date = sortedDates[value.toInt()];
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            DateFormat('E').format(date),
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox();
+                    },
+                  ),
                 ),
-              ],
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 30,
+                    getTitlesWidget: (value, meta) {
+                      if (value == 0) {
+                        return const SizedBox();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Text(
+                          value.toInt().toString(),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+              ),
+              gridData: FlGridData(
+                show: true,
+                horizontalInterval: 10,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.grey.shade200,
+                    strokeWidth: 1,
+                  );
+                },
+                drawVerticalLine: false,
+              ),
+              borderData: FlBorderData(
+                show: false,
+              ),
+              barGroups: barGroups,
             ),
-            const SizedBox(height: 8),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 4),
             Text(
-              'Last $daysToShow days',
+              'Nicotine Intake',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 12,
               ),
             ),
-            const SizedBox(height: 16),
-            
-            SizedBox(
-              height: 200,
-              child: spots.isEmpty || spots.every((spot) => spot.y == 0)
-                  ? const Center(
-                      child: Text('Not enough data to display chart'),
-                    )
-                  : LineChart(
-                      LineChartData(
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: false,
-                          horizontalInterval: 5,
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          rightTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                if (value.toInt() >= 0 && value.toInt() < dates.length) {
-                                  final date = dates[value.toInt()];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      DateFormat('E').format(date),
-                                      style: const TextStyle(fontSize: 10),
-                                    ),
-                                  );
-                                }
-                                return const SizedBox();
-                              },
-                              reservedSize: 30,
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  style: const TextStyle(fontSize: 10),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        minX: 0,
-                        maxX: dates.length - 1.0,
-                        minY: 0,
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: spots,
-                            isCurved: true,
-                            color: AppColors.primary,
-                            barWidth: 3,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(show: true),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              color: AppColors.primary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-            ),
-            
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildStat(
-                  context,
-                  'Today',
-                  '${dailyTotals[dates.last] ?? 0} mg',
-                  Icons.today,
-                ),
-                const SizedBox(width: 24),
-                _buildStat(
-                  context,
-                  'Average',
-                  '${_calculateAverage(dailyTotals, dates)} mg',
-                  Icons.analytics,
-                ),
-                const SizedBox(width: 24),
-                _buildStat(
-                  context,
-                  'Total',
-                  '${_calculateTotal(dailyTotals, dates)} mg',
-                  Icons.calculate,
-                ),
-              ],
-            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStat(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-  ) {
-    return Column(
-      children: [
-        Icon(icon, color: AppColors.primary),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ],
     );
   }
-
-  String _calculateAverage(Map<DateTime, double> dailyTotals, List<DateTime> dates) {
-    if (dates.isEmpty) return '0';
+  
+  double _getMaxY(List<double> values) {
+    if (values.isEmpty) return 10;
     
-    double sum = 0;
-    int count = 0;
-    
-    for (final date in dates) {
-      if (dailyTotals.containsKey(date)) {
-        sum += dailyTotals[date]!;
-        count++;
-      }
-    }
-    
-    if (count == 0) return '0';
-    return (sum / count).toStringAsFixed(1);
-  }
-
-  String _calculateTotal(Map<DateTime, double> dailyTotals, List<DateTime> dates) {
-    if (dates.isEmpty) return '0';
-    
-    double sum = 0;
-    
-    for (final date in dates) {
-      if (dailyTotals.containsKey(date)) {
-        sum += dailyTotals[date]!;
-      }
-    }
-    
-    return sum.toStringAsFixed(1);
+    final max = values.reduce((a, b) => a > b ? a : b);
+    return max < 10 ? 10 : (max * 1.2).ceilToDouble();
   }
 }

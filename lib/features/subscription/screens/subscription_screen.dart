@@ -1,8 +1,9 @@
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quit_vaping/data/models/subscription_model.dart';
-import 'package:quit_vaping/data/services/subscription_service.dart';
-import 'package:quit_vaping/shared/theme/app_colors.dart';
+
+import '../../../data/services/subscription_service.dart';
+import '../../../shared/theme/app_colors.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({Key? key}) : super(key: key);
@@ -12,7 +13,6 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  bool _yearlySelected = true;
   bool _isLoading = false;
 
   @override
@@ -22,42 +22,19 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Premium Subscription'),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              setState(() => _isLoading = true);
-              await subscriptionService.restorePurchases();
-              setState(() => _isLoading = false);
-              
-              if (!mounted) return;
-              
-              if (subscriptionService.isPremium) {
-      if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Subscription restored successfully!')),
-                );
-              } else {
-      if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('No previous subscription found')),
-                );
-              }
-            },
-            child: const Text('Restore'),
-          ),
-        ],
+        elevation: 0,
       ),
-      body: _isLoading
+      body: subscriptionService.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : subscriptionService.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildSubscriptionContent(context, subscriptionService),
+          : _buildSubscriptionContent(context, subscriptionService),
     );
   }
 
-  Widget _buildSubscriptionContent(BuildContext context, SubscriptionService subscriptionService) {
-    final premiumPlan = subscriptionPlans.firstWhere((plan) => plan.id == 'premium');
-    final freePlan = subscriptionPlans.firstWhere((plan) => plan.id == 'free');
+  Widget _buildSubscriptionContent(
+    BuildContext context,
+    SubscriptionService subscriptionService,
+  ) {
+    final isPremium = subscriptionService.isPremium;
     
     return SingleChildScrollView(
       child: Padding(
@@ -66,323 +43,335 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header
+            const Icon(
+              Icons.star,
+              size: 64,
+              color: Colors.amber,
+            ),
+            const SizedBox(height: 16),
             Text(
-              'Upgrade to Premium',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
+              isPremium ? 'You\'re a Premium Member!' : 'Upgrade to Premium',
+              style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
-              'Get access to all features and support your quit journey',
+              isPremium
+                  ? 'Enjoy all premium features until ${subscriptionService.subscriptionExpiry?.toString().split(' ')[0]}'
+                  : 'Unlock all features and remove ads',
               style: Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             
-            // Billing toggle
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _yearlySelected = false),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: !_yearlySelected ? AppColors.primary : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Text(
-                          'Monthly',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: !_yearlySelected ? Colors.white : Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _yearlySelected = true),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: _yearlySelected ? AppColors.primary : Colors.transparent,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Text(
-                              'Yearly',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: _yearlySelected ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            Positioned(
-                              right: 10,
-                              top: 0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Text(
-                                  'SAVE 44%',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // Features list
+            _buildFeatureItem(
+              context,
+              'Advanced AI Coach',
+              'Get personalized support from our advanced AI coach',
+              Icons.psychology,
             ),
-            const SizedBox(height: 24),
-            
-            // Price display
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 26),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    _yearlySelected
-                        ? '\$${premiumPlan.yearlyPrice.toStringAsFixed(2)}/year'
-                        : '\$${premiumPlan.monthlyPrice.toStringAsFixed(2)}/month',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                  ),
-                  if (_yearlySelected)
-                    Text(
-                      'Just \$${(premiumPlan.yearlyPrice / 12).toStringAsFixed(2)} per month',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '7-day free trial',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'Cancel anytime',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
+            _buildFeatureItem(
+              context,
+              'Ad-Free Experience',
+              'Enjoy the app without any advertisements',
+              Icons.block,
             ),
-            const SizedBox(height: 24),
-            
-            // Feature comparison
-            Text(
-              'Premium Features',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-              textAlign: TextAlign.center,
+            _buildFeatureItem(
+              context,
+              'Detailed Analytics',
+              'Access in-depth insights about your progress',
+              Icons.analytics,
             ),
-            const SizedBox(height: 16),
-            
-            // Feature list
-            ...subscriptionFeatures.map((feature) {
-              final isPremiumFeature = feature.isPremiumOnly;
-              final _ = freePlan.features.contains(feature.id);
-              
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    Icon(
-                      isPremiumFeature ? Icons.check_circle : Icons.check_circle_outline,
-                      color: isPremiumFeature ? AppColors.primary : Colors.grey,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            feature.name,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: isPremiumFeature ? Colors.black : Colors.grey,
-                            ),
-                          ),
-                          Text(
-                            feature.description,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isPremiumFeature ? Colors.black87 : Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isPremiumFeature)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          'PREMIUM',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              );
-            }).toList(),
+            _buildFeatureItem(
+              context,
+              'Unlimited Check-ins',
+              'Track your cravings and moods without limits',
+              Icons.check_circle,
+            ),
             
             const SizedBox(height: 32),
             
-            // Subscribe button
-            ElevatedButton(
-              onPressed: subscriptionService.isPremium
-                  ? null
-                  : () async {
-                      final productDetails = _yearlySelected
-                          ? subscriptionService.yearlySubscription
-                          : subscriptionService.monthlySubscription;
-                          
-                      if (productDetails != null) {
-                        setState(() => _isLoading = true);
-                        final success = await subscriptionService.purchaseSubscription(productDetails);
-                        setState(() => _isLoading = false);
+            // Subscription options
+            if (!isPremium) ...[
+              // Monthly subscription
+              if (subscriptionService.monthlySubscription != null)
+                _buildSubscriptionOption(
+                  context,
+                  'Monthly Premium',
+                  subscriptionService.monthlySubscription!.price,
+                  'Billed monthly, cancel anytime',
+                  () => _purchaseSubscription(
+                    context,
+                    subscriptionService,
+                    subscriptionService.monthlySubscription!,
+                  ),
+                ),
+              
+              const SizedBox(height: 16),
+              
+              // Yearly subscription
+              if (subscriptionService.yearlySubscription != null)
+                _buildSubscriptionOption(
+                  context,
+                  'Yearly Premium',
+                  subscriptionService.yearlySubscription!.price,
+                  'Save 50% compared to monthly',
+                  () => _purchaseSubscription(
+                    context,
+                    subscriptionService,
+                    subscriptionService.yearlySubscription!,
+                  ),
+                  isPrimary: true,
+                ),
+              
+              const SizedBox(height: 16),
+              
+              // Remove ads only
+              if (subscriptionService.removeAdsProduct != null)
+                _buildSubscriptionOption(
+                  context,
+                  'Remove Ads',
+                  subscriptionService.removeAdsProduct!.price,
+                  'One-time purchase, no subscription',
+                  () => _purchaseSubscription(
+                    context,
+                    subscriptionService,
+                    subscriptionService.removeAdsProduct!,
+                  ),
+                  isPrimary: false,
+                ),
+              
+              const SizedBox(height: 24),
+              
+              // Restore purchases button
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        
+                        await subscriptionService.restorePurchases();
+                        
+                        setState(() {
+                          _isLoading = false;
+                        });
                         
                         if (!mounted) return;
                         
-                        if (!success) {
-      if (!mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Purchase could not be completed')),
-                          );
-                        }
-                      } else {
-      if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Product not available')),
+                          const SnackBar(
+                            content: Text('Purchases restored successfully'),
+                          ),
                         );
-                      }
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: Text(
-                subscriptionService.isPremium
-                    ? 'You are a Premium Member'
-                    : 'Start 7-Day Free Trial',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 16),
-            
-            // Remove ads only button
-            if (!subscriptionService.adsRemoved && !subscriptionService.isPremium)
-              OutlinedButton(
-                onPressed: () async {
-                  final removeAdsProduct = subscriptionService.removeAdsProduct;
-                  
-                  if (removeAdsProduct != null) {
-                    setState(() => _isLoading = true);
-                    final success = await subscriptionService.purchaseSubscription(removeAdsProduct);
-                    setState(() => _isLoading = false);
-                    
-                    if (!mounted) return;
-                    
-                    if (!success) {
-      if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Purchase could not be completed')),
-                      );
-                    }
-                  } else {
-      if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Product not available')),
-                    );
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.primary),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  'Remove Ads Only (\$3.99)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
+                      },
+                child: const Text('Restore Purchases'),
               ),
               
-            const SizedBox(height: 24),
-            
-            // Terms and privacy
-            const Text(
-              'By subscribing, you agree to our Terms of Service and Privacy Policy. '
-              'Subscriptions will automatically renew unless canceled at least 24 hours before the end of the current period. '
-              'You can cancel anytime in your Google Play account settings.',
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
+              const SizedBox(height: 16),
+              
+              // Terms and privacy
+              const Text(
+                'By subscribing, you agree to our Terms of Service and Privacy Policy. '
+                'Subscriptions will automatically renew unless canceled at least 24 hours before the end of the current period. '
+                'You can cancel anytime in your App Store or Google Play account settings.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+            ] else ...[
+              // Already premium
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Continue Enjoying Premium'),
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildFeatureItem(
+    BuildContext context,
+    String title,
+    String description,
+    IconData icon,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppColors.primary),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubscriptionOption(
+    BuildContext context,
+    String title,
+    String price,
+    String description,
+    VoidCallback onTap, {
+    bool isPrimary = false,
+  }) {
+    return Card(
+      elevation: isPrimary ? 4 : 1,
+      color: isPrimary ? AppColors.primary : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: isPrimary
+            ? BorderSide.none
+            : BorderSide(color: Colors.grey[300]!),
+      ),
+      child: InkWell(
+        onTap: _isLoading ? null : onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: isPrimary ? Colors.white : null,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    price,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: isPrimary ? Colors.white : AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isPrimary ? Colors.white70 : Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                  if (isPrimary)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Text(
+                        'BEST VALUE',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _purchaseSubscription(
+    BuildContext context,
+    SubscriptionService subscriptionService,
+    ProductDetails product,
+  ) async {
+    setState(() {
+      _isLoading = true;
+    });
+    
+    try {
+      final success = await subscriptionService.purchaseSubscription(product);
+      
+      if (!mounted) return;
+      
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you for your purchase!'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Purchase was not completed.'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 }

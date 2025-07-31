@@ -57,11 +57,20 @@ class NotificationService {
     );
   }
   
+  // Store the last tapped notification payload
+  String? _lastTappedPayload;
+  
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap
     debugPrint('Notification tapped: ${response.payload}');
     
-    // TODO: Navigate to appropriate screen based on payload
+    // Store the payload for later retrieval
+    _lastTappedPayload = response.payload;
+  }
+  
+  /// Gets the payload from the last tapped notification
+  Future<String?> getLastTappedNotificationPayload() async {
+    return _lastTappedPayload;
   }
   
   // Show immediate notification

@@ -6,6 +6,10 @@ import '../../../data/services/user_service.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../subscription/screens/subscription_screen.dart';
+import '../../breathing/screens/breathing_notification_settings_screen.dart';
+import 'about_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'profile_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -31,7 +35,10 @@ class SettingsScreen extends StatelessWidget {
             title: const Text('Profile'),
             subtitle: Text(user?.name ?? 'Not set'),
             onTap: () {
-              // Navigate to profile screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
             },
           ),
           
@@ -114,6 +121,19 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           
+          ListTile(
+            leading: const Icon(Icons.spa),
+            title: const Text('Breathing Exercise Reminders'),
+            subtitle: const Text('Configure breathing exercise notifications'),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BreathingNotificationSettingsScreen()),
+              );
+            },
+          ),
+          
           // App section
           _buildSectionHeader(context, 'App'),
           
@@ -121,18 +141,9 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.info),
             title: const Text('About'),
             onTap: () {
-              // Show about dialog
-              showAboutDialog(
-                context: context,
-                applicationName: 'QuitVaping',
-                applicationVersion: '1.0.0',
-                applicationLegalese: '© 2025 QuitVaping',
-                children: [
-                  const SizedBox(height: 16),
-                  const Text(
-                    'An AI-powered app to help you quit vaping through personalized tracking and support.',
-                  ),
-                ],
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutScreen()),
               );
             },
           ),
@@ -140,11 +151,11 @@ class SettingsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.privacy_tip),
             title: const Text('Privacy Policy'),
-            onTap: () async {
-              const url = 'https://quitvaping.app/privacy';
-              if (await canLaunchUrl(Uri.parse(url))) {
-                await launchUrl(Uri.parse(url));
-              }
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen()),
+              );
             },
           ),
           
@@ -152,7 +163,7 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.description),
             title: const Text('Terms of Service'),
             onTap: () async {
-              const url = 'https://quitvaping.app/terms';
+              const url = 'https://llakterian.github.io/quitvaping/terms.html';
               if (await canLaunchUrl(Uri.parse(url))) {
                 await launchUrl(Uri.parse(url));
               }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../config/env_config.dart';
 
 enum SubscriptionTier {
   free,
@@ -12,10 +13,13 @@ class SubscriptionService with ChangeNotifier {
   static const String _subscriptionStatusKey = 'subscription_status';
   static const String _subscriptionExpiryKey = 'subscription_expiry';
   
-  // Product IDs
-  static const String _monthlySubscriptionId = 'quit_vaping_premium_monthly';
-  static const String _yearlySubscriptionId = 'quit_vaping_premium_yearly';
-  static const String _removeAdsId = 'quit_vaping_remove_ads';
+  // Product IDs from environment configuration
+  String get _monthlySubscriptionId => EnvConfig.iapMonthlySubscriptionId;
+  String get _yearlySubscriptionId => EnvConfig.iapYearlySubscriptionId;
+  String get _removeAdsId => EnvConfig.iapRemoveAdsId;
+  
+  // Use test products based on environment configuration
+  bool get _useTestProducts => EnvConfig.useTestIap;
   
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
@@ -61,32 +65,43 @@ class SubscriptionService with ChangeNotifier {
   }
 
   Future<void> _initialize() async {
-    // Load saved subscription status
-    await _loadSavedStatus();
-    
-    // Initialize in-app purchase
-    final isAvailable = await _inAppPurchase.isAvailable();
-    if (!isAvailable) {
+    try {
+      // Load saved subscription status
+      await _loadSavedStatus();
+      
+      // Initialize in-app purchase
+      final isAvailable = await _inAppPurchase.isAvailable();
+      if (!isAvailable) {
+        debugPrint('In-app purchases not available on this device');
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // Set up purchase stream listener
+      _subscription = _inAppPurchase.purchaseStream.listen(
+        _handlePurchaseUpdates,
+        onDone: () => _subscription?.cancel(),
+        onError: (error) {
+          debugPrint('Purchase stream error: $error');
+          // Continue with the app even if there's an error with the purchase stream
+        },
+      );
+
+      // Load product details
+      await _loadProducts();
+      
+      // Restore purchases to ensure user has access to what they've already bought
+      // This is required by app store policies
+      await restorePurchases();
+      
+      debugPrint('SubscriptionService initialized successfully');
+    } catch (e) {
+      debugPrint('Error initializing SubscriptionService: $e');
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return;
     }
-
-    // Set up purchase stream listener
-    _subscription = _inAppPurchase.purchaseStream.listen(
-      _handlePurchaseUpdates,
-      onDone: () => _subscription?.cancel(),
-      onError: (error) => debugPrint('Purchase error: $error'),
-    );
-
-    // Load product details
-    await _loadProducts();
-    
-    // Restore purchases
-    await restorePurchases();
-    
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> _loadSavedStatus() async {
@@ -130,48 +145,103 @@ class SubscriptionService with ChangeNotifier {
 
   Future<void> _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetailsList) async {
     for (final purchaseDetails in purchaseDetailsList) {
+      // Keep track of the purchase status for analytics and debugging
+      debugPrint('Purchase status for ${purchaseDetails.productID}: ${purchaseDetails.status}');
+      
       if (purchaseDetails.status == PurchaseStatus.pending) {
-        // Show pending UI
+        // Purchase is pending - could add UI indicator here if needed
+        debugPrint('Purchase pending for ${purchaseDetails.productID}');
       } else if (purchaseDetails.status == PurchaseStatus.error) {
-        // Handle error
-        debugPrint('Purchase error: ${purchaseDetails.error}');
+        // Handle error - important for compliance to properly handle errors
+        debugPrint('Purchase error for ${purchaseDetails.productID}: ${purchaseDetails.error?.message}');
+        
+        // You could show an error message to the user here
+        // This is important for transparency required by app stores
       } else if (purchaseDetails.status == PurchaseStatus.purchased || 
                 purchaseDetails.status == PurchaseStatus.restored) {
-        // Grant entitlement for the purchased product
-        await _handleSuccessfulPurchase(purchaseDetails);
+        // Verify the purchase - this is required by app store policies
+        // In a production app, you should verify receipts with your backend
+        
+        // For testing, we'll assume all purchases are valid
+        // In production, you should implement server-side validation
+        bool valid = true;
+        if (_useTestProducts) {
+          debugPrint('Test purchase - skipping validation for ${purchaseDetails.productID}');
+        } else {
+          // Here you would validate the purchase with your backend
+          // valid = await _validatePurchase(purchaseDetails);
+          debugPrint('Production purchase - validation would happen here for ${purchaseDetails.productID}');
+        }
+        
+        if (valid) {
+          // Grant entitlement for the purchased product
+          await _handleSuccessfulPurchase(purchaseDetails);
+        } else {
+          debugPrint('Invalid purchase detected for ${purchaseDetails.productID}');
+          // In a real app, you might want to report this to your backend
+        }
       }
       
+      // This is required by the in_app_purchase plugin to complete the transaction
+      // Failing to call this can result in app store compliance issues
       if (purchaseDetails.pendingCompletePurchase) {
-        await _inAppPurchase.completePurchase(purchaseDetails);
+        try {
+          await _inAppPurchase.completePurchase(purchaseDetails);
+          debugPrint('Purchase completed for ${purchaseDetails.productID}');
+        } catch (e) {
+          debugPrint('Error completing purchase for ${purchaseDetails.productID}: $e');
+        }
       }
     }
   }
 
   Future<void> _handleSuccessfulPurchase(PurchaseDetails purchase) async {
-    // Handle subscription products
-    if (purchase.productID == _monthlySubscriptionId || 
-        purchase.productID == _yearlySubscriptionId) {
-      _currentTier = SubscriptionTier.premium;
-      
-      // Set expiry date based on subscription type
-      final now = DateTime.now();
-      if (purchase.productID == _monthlySubscriptionId) {
-        _subscriptionExpiry = DateTime(now.year, now.month + 1, now.day);
-      } else {
-        _subscriptionExpiry = DateTime(now.year + 1, now.month, now.day);
+    debugPrint('Handling successful purchase for ${purchase.productID}');
+    
+    try {
+      // Handle subscription products
+      if (purchase.productID == _monthlySubscriptionId || 
+          purchase.productID == _yearlySubscriptionId) {
+        _currentTier = SubscriptionTier.premium;
+        
+        // Set expiry date based on subscription type
+        // In a production app, you should extract the actual expiry date from the purchase receipt
+        // This is just a placeholder implementation
+        final now = DateTime.now();
+        if (purchase.productID == _monthlySubscriptionId) {
+          _subscriptionExpiry = DateTime(now.year, now.month + 1, now.day);
+          debugPrint('Monthly subscription activated until ${_subscriptionExpiry.toString()}');
+        } else {
+          _subscriptionExpiry = DateTime(now.year + 1, now.month, now.day);
+          debugPrint('Yearly subscription activated until ${_subscriptionExpiry.toString()}');
+        }
+        
+        await _saveSubscriptionStatus();
       }
       
-      await _saveSubscriptionStatus();
+      // Handle remove ads product
+      if (purchase.productID == _removeAdsId) {
+        _adsRemoved = true;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('ads_removed', true);
+        debugPrint('Ads removed permanently');
+      }
+      
+      // Store purchase receipt for verification
+      // In a production app, you should send this to your backend for validation
+      if (purchase.verificationData.serverVerificationData.isNotEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+          'purchase_receipt_${purchase.productID}', 
+          purchase.verificationData.serverVerificationData
+        );
+        debugPrint('Purchase receipt stored for ${purchase.productID}');
+      }
+      
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error handling successful purchase: $e');
     }
-    
-    // Handle remove ads product
-    if (purchase.productID == _removeAdsId) {
-      _adsRemoved = true;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('ads_removed', true);
-    }
-    
-    notifyListeners();
   }
 
   Future<void> _saveSubscriptionStatus() async {

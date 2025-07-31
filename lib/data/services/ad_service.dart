@@ -1,11 +1,7 @@
 import 'dart:developer' as dev;
-import 'dart:developer' as dev;
-import 'dart:developer' as dev;
-import 'dart:developer' as dev;
-import 'dart:developer' as dev;
-import 'dart:developer' as dev;
 import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../../config/env_config.dart';
 
 class AdService {
   static final AdService _instance = AdService._internal();
@@ -13,14 +9,6 @@ class AdService {
   AdService._internal();
 
   bool _initialized = false;
-  
-  // Test ad units - replace with real ones for production
-  static const String _bannerAdUnitIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
-  static const String _bannerAdUnitIdiOS = 'ca-app-pub-3940256099942544/2934735716';
-  static const String _interstitialAdUnitIdAndroid = 'ca-app-pub-3940256099942544/1033173712';
-  static const String _interstitialAdUnitIdiOS = 'ca-app-pub-3940256099942544/4411468910';
-  static const String _rewardedAdUnitIdAndroid = 'ca-app-pub-3940256099942544/5224354917';
-  static const String _rewardedAdUnitIdiOS = 'ca-app-pub-3940256099942544/1712485313';
 
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
@@ -30,56 +18,93 @@ class AdService {
 
   String get bannerAdUnitId {
     if (Platform.isAndroid) {
-      return _bannerAdUnitIdAndroid;
+      return EnvConfig.admobBannerAdUnitIdAndroid;
     } else if (Platform.isIOS) {
-      return _bannerAdUnitIdiOS;
+      return EnvConfig.admobBannerAdUnitIdIos;
     }
     return '';
   }
 
   String get interstitialAdUnitId {
     if (Platform.isAndroid) {
-      return _interstitialAdUnitIdAndroid;
+      return EnvConfig.admobInterstitialAdUnitIdAndroid;
     } else if (Platform.isIOS) {
-      return _interstitialAdUnitIdiOS;
+      return EnvConfig.admobInterstitialAdUnitIdIos;
     }
     return '';
   }
 
   String get rewardedAdUnitId {
     if (Platform.isAndroid) {
-      return _rewardedAdUnitIdAndroid;
+      return EnvConfig.admobRewardedAdUnitIdAndroid;
     } else if (Platform.isIOS) {
-      return _rewardedAdUnitIdiOS;
+      return EnvConfig.admobRewardedAdUnitIdIos;
     }
     return '';
   }
 
+  bool get isEnabled => EnvConfig.enableAds && EnvConfig.enableMonetization;
+
   Future<void> initialize() async {
     if (_initialized) return;
     
-    await MobileAds.instance.initialize();
-    _initialized = true;
-    
-    // Load initial ads
-    _createInterstitialAd();
-    _createRewardedAd();
+    try {
+      // Initialize MobileAds with request configuration for GDPR compliance
+      await MobileAds.instance.initialize();
+      
+      // Set up request configuration for GDPR compliance
+      // This is important for app store compliance with privacy regulations
+      MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(
+          tagForChildDirectedTreatment: TagForChildDirectedTreatment.unspecified,
+          tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.unspecified,
+          maxAdContentRating: MaxAdContentRating.pg,
+        ),
+      );
+      
+      _initialized = true;
+      
+      // Load initial ads
+      _createInterstitialAd();
+      _createRewardedAd();
+      
+      dev.log('AdService initialized successfully');
+    } catch (e) {
+      dev.log('Error initializing AdService: $e');
+      // Even if initialization fails, mark as initialized to prevent repeated attempts
+      _initialized = true;
+    }
   }
 
   void _createInterstitialAd() {
+    // Create a non-personalized ad request for GDPR compliance
+    final AdRequest request = AdRequest(
+      nonPersonalizedAds: true, // Important for GDPR compliance
+      keywords: ['health', 'wellness', 'quit smoking', 'quit vaping'],
+      contentUrl: 'https://quitvaping.app',
+    );
+    
     InterstitialAd.load(
       adUnitId: interstitialAdUnitId,
-      request: const AdRequest(),
+      request: request,
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           _interstitialAd = ad;
           _interstitialLoadAttempts = 0;
+          dev.log('Interstitial ad loaded successfully');
         },
         onAdFailedToLoad: (LoadAdError error) {
           _interstitialLoadAttempts += 1;
           _interstitialAd = null;
+          dev.log('Interstitial ad failed to load: ${error.message}. Error code: ${error.code}');
+          
+          // Implement exponential backoff for retries to avoid excessive ad requests
+          // This is important for app store compliance
           if (_interstitialLoadAttempts <= maxFailedLoadAttempts) {
-            _createInterstitialAd();
+            Future.delayed(
+              Duration(seconds: 1 << _interstitialLoadAttempts), // Exponential backoff: 2, 4, 8 seconds
+              _createInterstitialAd,
+            );
           }
         },
       ),
@@ -87,19 +112,34 @@ class AdService {
   }
 
   void _createRewardedAd() {
+    // Create a non-personalized ad request for GDPR compliance
+    final AdRequest request = AdRequest(
+      nonPersonalizedAds: true, // Important for GDPR compliance
+      keywords: ['health', 'wellness', 'quit smoking', 'quit vaping'],
+      contentUrl: 'https://quitvaping.app',
+    );
+    
     RewardedAd.load(
       adUnitId: rewardedAdUnitId,
-      request: const AdRequest(),
+      request: request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (RewardedAd ad) {
           _rewardedAd = ad;
           _rewardedLoadAttempts = 0;
+          dev.log('Rewarded ad loaded successfully');
         },
         onAdFailedToLoad: (LoadAdError error) {
           _rewardedLoadAttempts += 1;
           _rewardedAd = null;
+          dev.log('Rewarded ad failed to load: ${error.message}. Error code: ${error.code}');
+          
+          // Implement exponential backoff for retries to avoid excessive ad requests
+          // This is important for app store compliance
           if (_rewardedLoadAttempts <= maxFailedLoadAttempts) {
-            _createRewardedAd();
+            Future.delayed(
+              Duration(seconds: 1 << _rewardedLoadAttempts), // Exponential backoff: 2, 4, 8 seconds
+              _createRewardedAd,
+            );
           }
         },
       ),
@@ -153,18 +193,27 @@ class AdService {
   }
 
   BannerAd createBannerAd() {
+    // Create a non-personalized ad request for GDPR compliance
+    final AdRequest request = AdRequest(
+      nonPersonalizedAds: true, // Important for GDPR compliance
+      keywords: ['health', 'wellness', 'quit smoking', 'quit vaping'],
+      contentUrl: 'https://quitvaping.app',
+    );
+    
     return BannerAd(
       adUnitId: bannerAdUnitId,
       size: AdSize.banner,
-      request: const AdRequest(),
+      request: request,
       listener: BannerAdListener(
-        onAdLoaded: (Ad ad) => dev.log('Ad loaded.'),
+        onAdLoaded: (Ad ad) => dev.log('Banner ad loaded successfully'),
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           ad.dispose();
-          dev.log('Ad failed to load: $error');
+          dev.log('Banner ad failed to load: ${error.message}. Error code: ${error.code}');
         },
-        onAdOpened: (Ad ad) => dev.log('Ad opened.'),
-        onAdClosed: (Ad ad) => dev.log('Ad closed.'),
+        onAdOpened: (Ad ad) => dev.log('Banner ad opened'),
+        onAdClosed: (Ad ad) => dev.log('Banner ad closed'),
+        onAdImpression: (Ad ad) => dev.log('Banner ad impression recorded'),
+        onAdClicked: (Ad ad) => dev.log('Banner ad clicked'),
       ),
     );
   }

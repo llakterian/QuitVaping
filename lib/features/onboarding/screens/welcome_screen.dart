@@ -5,6 +5,7 @@ import '../../../data/services/user_service.dart';
 import '../../../data/models/user_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
+import '../../settings/screens/privacy_policy_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   final List<String> _selectedTriggers = [];
   final List<String> _selectedMotivations = [];
   DateTime? _quitDate;
+  bool _privacyPolicyAccepted = false;
 
   @override
   void dispose() {
@@ -131,40 +133,119 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.track_changes, color: AppColors.primary),
                       SizedBox(width: 12),
                       Expanded(child: Text('Track your progress in real-time')),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(Icons.psychology, color: AppColors.primary),
-                      SizedBox(width: 12),
-                      Expanded(child: Text('AI-powered personalized support')),
+                      const Icon(Icons.psychology, color: AppColors.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Expanded(child: Text('AI-powered personalized support')),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'PREMIUM',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  SizedBox(height: 12),
-                  Row(
+                  const SizedBox(height: 12),
+                  const Row(
                     children: [
                       Icon(Icons.self_improvement, color: AppColors.primary),
                       SizedBox(width: 12),
                       Expanded(child: Text('Guided breathing exercises')),
                     ],
                   ),
-                  SizedBox(height: 12),
-                  Row(
+                  const SizedBox(height: 12),
+                  const Row(
                     children: [
                       Icon(Icons.emergency, color: AppColors.primary),
                       SizedBox(width: 12),
                       Expanded(child: Text('Panic mode for intense cravings')),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.analytics, color: AppColors.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Expanded(child: Text('Detailed analytics and insights')),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'PREMIUM',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.block, color: AppColors.primary),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Expanded(child: Text('Ad-free experience')),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.amber,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Text(
+                                'PREMIUM',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -518,15 +599,80 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
           ],
+          
+          const SizedBox(height: 24),
+          
+          // Privacy policy consent
+          Row(
+            children: [
+              Checkbox(
+                value: _privacyPolicyAccepted,
+                onChanged: (value) {
+                  setState(() {
+                    _privacyPolicyAccepted = value ?? false;
+                  });
+                },
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyScreen(),
+                      ),
+                    );
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        const TextSpan(
+                          text: 'I agree to the ',
+                        ),
+                        TextSpan(
+                          text: 'Privacy Policy',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
   void _completeOnboarding() async {
+    // Validate required fields
     if (_nameController.text.isEmpty || _ageController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all required fields')),
+      );
+      return;
+    }
+    
+    // Check if privacy policy is accepted
+    if (!_privacyPolicyAccepted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please accept the Privacy Policy to continue'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
+    // Check if quit date is set
+    if (_quitDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please set a quit date to continue')),
       );
       return;
     }
@@ -542,13 +688,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       previousQuitAttempts: [],
     );
 
-    await userService.createUser(
-      name: _nameController.text,
-      age: int.parse(_ageController.text),
-      gender: _selectedGender,
-      vapingHistory: vapingHistory,
-      motivationFactors: _selectedMotivations,
-      quitDate: _quitDate,
-    );
+    try {
+      await userService.createUser(
+        name: _nameController.text,
+        age: int.parse(_ageController.text),
+        gender: _selectedGender,
+        vapingHistory: vapingHistory,
+        motivationFactors: _selectedMotivations,
+        quitDate: _quitDate,
+        privacyPolicyAccepted: _privacyPolicyAccepted,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error creating user: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

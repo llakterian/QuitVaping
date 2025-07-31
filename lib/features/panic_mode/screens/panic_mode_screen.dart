@@ -6,6 +6,7 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/constants/app_constants.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../breathing/screens/breathing_screen.dart';
+import '../../breathing/screens/panic_mode_breathing_selection_screen.dart';
 import '../../subscription/screens/subscription_screen.dart';
 
 class PanicModeScreen extends StatefulWidget {
@@ -249,7 +250,9 @@ class _PanicModeScreenState extends State<PanicModeScreen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const BreathingScreen()),
+              MaterialPageRoute(
+                builder: (context) => const PanicModeBreathingSelectionScreen(),
+              ),
             );
           },
           style: OutlinedButton.styleFrom(

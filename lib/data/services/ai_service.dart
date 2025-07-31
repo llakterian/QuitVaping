@@ -133,7 +133,7 @@ class AIService extends ChangeNotifier {
     final Map<String, int> triggerCounts = {};
     for (final craving in cravings) {
       final trigger = craving.triggerCategory;
-      triggerCounts[trigger] = (triggerCounts[trigger] ?? 0) + 1;
+      if (trigger != null) { triggerCounts[trigger] = ((triggerCounts[trigger] ?? 0) + 1).toString(); }
     }
     
     // Find most common trigger
@@ -231,12 +231,12 @@ class AIService extends ChangeNotifier {
         if (!category.contains(craving.specificTrigger)) {
           category.add(craving.specificTrigger!);
         }
-        triggersByCategory[craving.triggerCategory] = category;
+        triggersByCategory[craving.triggerCategory!] = category;
       }
       
       // Add to time distribution
       final timeOfDay = craving.timeOfDay;
-      timeDistribution[timeOfDay] = (timeDistribution[timeOfDay] ?? 0) + 1;
+      if (timeOfDay != null) { timeDistribution[timeOfDay] = ((timeDistribution[timeOfDay] ?? 0.0) + 1.0); }
       
       // Track coping strategies
       if (craving.copingStrategy != null) {
@@ -343,7 +343,7 @@ class AIService extends ChangeNotifier {
   double _calculateAverageIntensity(List<CravingModel> cravings) {
     if (cravings.isEmpty) return 0;
     
-    final sum = cravings.fold(0, (sum, craving) => sum + (craving.intensity == null ? 0 : craving.intensity));
+    final sum = cravings.fold<int>(0, (sum, craving) => sum + ((craving.intensity as num?) ?? 0).toInt());
     return sum / cravings.length;
   }
   
@@ -367,8 +367,8 @@ class AIService extends ChangeNotifier {
     final secondHalf = sortedCravings.sublist(midpoint);
     
     // Calculate average intensity for each half
-    final firstAvg = firstHalf.isEmpty ? 0 : firstHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity)) / firstHalf.length;
-    final secondAvg = secondHalf.isEmpty ? 0 : secondHalf.fold(0, (sum, c) => sum + (c.intensity == null ? 0 : c.intensity)) / secondHalf.length;
+    final firstAvg = firstHalf.isEmpty ? 0 : firstHalf.fold<int>(0, (sum, c) => sum + ((c.intensity as num?) ?? 0).toInt()) / firstHalf.length;
+    final secondAvg = secondHalf.isEmpty ? 0 : secondHalf.fold<int>(0, (sum, c) => sum + ((c.intensity as num?) ?? 0).toInt()) / secondHalf.length;
     
     // Calculate frequency (cravings per day)
     final firstDays = firstHalf.isNotEmpty && firstHalf.length > 1 ? 

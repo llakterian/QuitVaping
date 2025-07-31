@@ -1,263 +1,223 @@
-
+/// Application constants
 class AppConstants {
+  // Private constructor to prevent instantiation
+  AppConstants._();
+  
   // App information
   static const String appName = 'QuitVaping';
   static const String appVersion = '1.0.0';
-  static const String appTagline = 'Your AI-powered journey to quit vaping';
   
-  // Health milestones (in hours)
-  static const Map<int, String> healthMilestones = {
-    8: 'Carbon monoxide levels drop to normal',
-    24: 'Nicotine is eliminated from your body',
-    48: 'Your sense of taste and smell begin to improve',
-    72: 'Breathing becomes easier as bronchial tubes relax',
-    168: 'Circulation improves',
-    336: 'Lung function increases',
-    720: 'Coughing and shortness of breath decrease',
-    2160: 'Risk of heart attack begins to drop',
-    8760: 'Risk of lung cancer decreases by 30-50%',
-  };
+  // Shared preferences keys
+  static const String prefOnboardingCompleted = 'onboarding_completed';
+  static const String prefUserData = 'user_data';
+  static const String prefThemeMode = 'theme_mode';
+  static const String prefSubscriptionStatus = 'subscription_status';
   
-  // Trigger categories
+  // Default values
+  static const int defaultBreathingDuration = 5; // minutes
+  static const double defaultCigaretteCost = 0.50; // dollars per cigarette
+  static const int defaultCigarettesPerDay = 20;
+  
+  // Trigger categories for cravings
   static const List<String> triggerCategories = [
-    'emotional',
-    'social',
-    'environmental',
-    'physical',
+    'Stress',
+    'Social situation',
+    'After a meal',
+    'Boredom',
+    'Habit/Routine',
+    'Alcohol',
+    'Coffee',
+    'Emotional',
+    'Other'
   ];
   
   // Common triggers by category
   static const Map<String, List<String>> commonTriggers = {
-    'emotional': [
-      'Stress',
+    'Stress': [
+      'Work pressure',
+      'Financial concerns',
+      'Family issues',
+      'Deadlines',
+      'Traffic',
+      'Arguments'
+    ],
+    'Social situation': [
+      'Friends vaping',
+      'Parties',
+      'Bars/clubs',
+      'Social gatherings',
+      'Work breaks'
+    ],
+    'After a meal': [
+      'Breakfast',
+      'Lunch',
+      'Dinner',
+      'Coffee break',
+      'Dessert'
+    ],
+    'Boredom': [
+      'Waiting',
+      'Free time',
+      'Nothing to do',
+      'Procrastination'
+    ],
+    'Habit/Routine': [
+      'Morning routine',
+      'After work',
+      'While driving',
+      'With coffee',
+      'Before bed'
+    ],
+    'Alcohol': [
+      'Beer',
+      'Wine',
+      'Spirits',
+      'Social drinking',
+      'At home'
+    ],
+    'Coffee': [
+      'Morning coffee',
+      'Coffee break',
+      'After meals'
+    ],
+    'Emotional': [
       'Anxiety',
-      'Boredom',
       'Sadness',
       'Anger',
-      'Loneliness',
-      'Celebration',
+      'Excitement',
+      'Boredom',
+      'Loneliness'
     ],
-    'social': [
-      'Friends vaping',
-      'Party/social gathering',
-      'Drinking alcohol',
-      'After meals with others',
-      'Work breaks',
-      'Peer pressure',
-    ],
-    'environmental': [
-      'Driving',
-      'After waking up',
-      'Before bed',
-      'Specific location',
+    'Other': [
       'Seeing vaping devices',
-      'Smelling vape scents',
-    ],
-    'physical': [
-      'After eating',
-      'With coffee/tea',
-      'During work breaks',
-      'While drinking alcohol',
-      'When feeling tired',
+      'Smelling vapor',
       'After exercise',
-    ],
+      'While on phone'
+    ]
   };
   
   // Coping strategies
   static const List<String> copingStrategies = [
     'Deep breathing',
+    'Distraction',
+    'Exercise',
     'Drinking water',
-    'Physical activity',
-    'Distraction (game, app, etc.)',
-    'Calling someone',
     'Chewing gum',
-    'Using nicotine replacement',
+    'Calling a friend',
+    'Using NRT',
     'Meditation',
-    'Delaying (waiting it out)',
-    'Leaving the situation',
+    'Other'
   ];
+  
+  // Health milestones (days => description)
+  static const Map<int, String> healthMilestones = {
+    1: 'Blood pressure and heart rate start to normalize',
+    2: 'Carbon monoxide levels in blood return to normal',
+    3: 'Sense of taste and smell begin to improve',
+    7: 'Nicotine is eliminated from the body',
+    14: 'Circulation improves, lung function begins to improve',
+    30: 'Lung function significantly improves, coughing and shortness of breath decrease',
+    90: 'Lung function continues to improve, risk of heart attack begins to drop',
+    180: 'Risk of heart disease drops to half that of a smoker',
+    365: 'Risk of coronary heart disease is half that of a smoker'
+  };
+  
+  // Subscription product IDs
+  static const String monthlySubscriptionId = 'quit_vaping_monthly';
+  static const String yearlySubscriptionId = 'quit_vaping_yearly';
+  static const String removeAdsId = 'quit_vaping_remove_ads';
+  
+  // API endpoints
+  static const String baseApiUrl = 'https://api.quitvaping.app';
+  static const String aiEndpoint = '/api/ai/chat';
+  
+  // Notification channels
+  static const String reminderChannelId = 'reminders';
+  static const String reminderChannelName = 'Reminders';
+  static const String reminderChannelDescription = 'Notifications for reminders';
+  
+  static const String achievementChannelId = 'achievements';
+  static const String achievementChannelName = 'Achievements';
+  static const String achievementChannelDescription = 'Notifications for achievements';
+  
+  // Animation durations
+  static const Duration shortAnimationDuration = Duration(milliseconds: 200);
+  static const Duration mediumAnimationDuration = Duration(milliseconds: 500);
+  static const Duration longAnimationDuration = Duration(milliseconds: 800);
   
   // Motivation categories
   static const List<String> motivationCategories = [
     'Health',
     'Financial',
-    'Social',
-    'Personal freedom',
-    'Setting example for others',
+    'Family',
     'Appearance',
-    'Sense of smell/taste',
-    'Athletic performance',
-    'Environmental concerns',
+    'Freedom',
+    'Social',
+    'Self-improvement',
+    'Other'
   ];
   
-  // Breathing exercise types
-  static const Map<String, Map<String, dynamic>> breathingExercises = {
-    'box': {
-      'name': 'Box Breathing',
-      'description': 'Inhale, hold, exhale, and hold again for equal counts',
-      'steps': [
-        {'action': 'inhale', 'seconds': 4, 'instruction': 'Breathe in slowly through your nose'},
-        {'action': 'hold', 'seconds': 4, 'instruction': 'Hold your breath'},
-        {'action': 'exhale', 'seconds': 4, 'instruction': 'Exhale slowly through your mouth'},
-        {'action': 'hold', 'seconds': 4, 'instruction': 'Hold your breath'},
-      ],
-      'benefits': 'Reduces stress and improves concentration',
-      'isPremium': false,
-    },
-    '478': {
-      'name': '4-7-8 Breathing',
-      'description': 'Inhale for 4, hold for 7, exhale for 8',
-      'steps': [
-        {'action': 'inhale', 'seconds': 4, 'instruction': 'Breathe in quietly through your nose'},
-        {'action': 'hold', 'seconds': 7, 'instruction': 'Hold your breath'},
-        {'action': 'exhale', 'seconds': 8, 'instruction': 'Exhale completely through your mouth'},
-      ],
-      'benefits': 'Helps with anxiety, sleep, and managing cravings',
-      'isPremium': true,
-    },
-    'diaphragmatic': {
-      'name': 'Diaphragmatic Breathing',
-      'description': 'Deep belly breathing that engages the diaphragm',
-      'steps': [
-        {'action': 'inhale', 'seconds': 4, 'instruction': 'Breathe in deeply through your nose, filling your belly'},
-        {'action': 'hold', 'seconds': 1, 'instruction': 'Brief pause'},
-        {'action': 'exhale', 'seconds': 6, 'instruction': 'Exhale slowly through pursed lips'},
-      ],
-      'benefits': 'Reduces stress and increases oxygen supply',
-      'isPremium': true,
-    },
-    'pursed': {
-      'name': 'Pursed Lip Breathing',
-      'description': 'Inhale through nose, exhale slowly through pursed lips',
-      'steps': [
-        {'action': 'inhale', 'seconds': 2, 'instruction': 'Breathe in through your nose'},
-        {'action': 'exhale', 'seconds': 4, 'instruction': 'Exhale slowly through pursed lips'},
-      ],
-      'benefits': 'Improves ventilation and releases trapped air in lungs',
-      'isPremium': false,
-    },
-  };
-  
-  // Panic mode distraction techniques
+  // Panic mode distractions
   static const List<Map<String, dynamic>> panicModeDistractions = [
     {
-      'title': '5-4-3-2-1 Grounding',
-      'description': 'Focus on your senses to ground yourself in the present moment',
+      'title': 'Deep Breathing',
+      'description': 'Take slow, deep breaths to calm your mind and reduce cravings',
+      'icon': 'assets/images/panic_mode/breathing.png',
       'steps': [
-        'Name 5 things you can see',
-        'Name 4 things you can touch',
-        'Name 3 things you can hear',
-        'Name 2 things you can smell',
-        'Name 1 thing you can taste',
-      ],
-      'duration': 60, // seconds
-      'isPremium': false,
+        'Find a comfortable position',
+        'Breathe in slowly through your nose for 4 seconds',
+        'Hold your breath for 4 seconds',
+        'Exhale slowly through your mouth for 6 seconds',
+        'Repeat for at least 2 minutes'
+      ]
     },
     {
-      'title': 'Quick Physical Activity',
-      'description': 'Get your body moving to redirect your focus',
+      'title': '5-4-3-2-1 Technique',
+      'description': 'Ground yourself by engaging your senses',
+      'icon': 'assets/images/panic_mode/grounding.png',
       'steps': [
-        '10 jumping jacks',
-        '10 arm circles',
-        '10 high knees',
-        '10 seconds of jogging in place',
-      ],
-      'duration': 45, // seconds
-      'isPremium': false,
+        'Acknowledge 5 things you can see',
+        'Acknowledge 4 things you can touch',
+        'Acknowledge 3 things you can hear',
+        'Acknowledge 2 things you can smell',
+        'Acknowledge 1 thing you can taste'
+      ]
     },
     {
-      'title': 'Cold Water Technique',
-      'description': 'Use cold water to create a physical sensation that interrupts cravings',
+      'title': 'Physical Activity',
+      'description': 'Move your body to distract from cravings',
+      'icon': 'assets/images/panic_mode/exercise.png',
       'steps': [
-        'Fill a glass with cold water',
-        'Take small sips and focus on the sensation',
-        'Splash cold water on your face or wrists',
-        'Notice how the cold feeling changes your focus',
-      ],
-      'duration': 30, // seconds
-      'isPremium': false,
+        'Do 10 jumping jacks',
+        'Do 10 push-ups or wall push-ups',
+        'March in place for 30 seconds',
+        'Stretch your arms and legs',
+        'Take a short walk if possible'
+      ]
     },
     {
-      'title': 'Urge Surfing',
-      'description': 'Visualize your craving as a wave that rises and eventually falls',
+      'title': 'Drink Water',
+      'description': 'Hydrate to reduce cravings',
+      'icon': 'assets/images/panic_mode/water.png',
       'steps': [
-        'Close your eyes and notice the craving sensation',
-        'Visualize it as a wave building in intensity',
-        'Don\'t fight it - observe it rising',
-        'Notice as it peaks and then gradually subsides',
-        'Remind yourself that all cravings eventually pass',
-      ],
-      'duration': 90, // seconds
-      'isPremium': false,
-    },
-    // Premium distraction techniques
-    {
-      'title': 'Progressive Muscle Relaxation',
-      'description': 'Systematically tense and relax muscle groups to reduce physical tension',
-      'steps': [
-        'Find a comfortable position and close your eyes',
-        'Tense the muscles in your feet for 5 seconds, then release',
-        'Tense your calf muscles for 5 seconds, then release',
-        'Continue up through your legs, abdomen, chest, arms, and face',
-        'Notice the feeling of relaxation spreading through your body',
-        'Take deep breaths and enjoy the sensation of relaxation',
-      ],
-      'duration': 120, // seconds
-      'isPremium': true,
+        'Get a glass of cold water',
+        'Take small sips slowly',
+        'Focus on the sensation of the water',
+        'Notice how it feels as you swallow',
+        'Finish the entire glass'
+      ]
     },
     {
-      'title': 'Guided Imagery',
-      'description': 'Use your imagination to transport yourself to a peaceful place',
+      'title': 'Distraction Activity',
+      'description': 'Engage your mind in something else',
+      'icon': 'assets/images/panic_mode/distraction.png',
       'steps': [
-        'Close your eyes and take several deep breaths',
-        'Imagine a peaceful place (beach, forest, mountain, etc.)',
-        'Visualize the details - colors, sounds, smells, textures',
-        'Imagine yourself completely relaxed in this place',
-        'Feel the calmness and serenity washing over you',
-        'Stay in this peaceful place for a few minutes',
-      ],
-      'duration': 180, // seconds
-      'isPremium': true,
-    },
-    {
-      'title': 'Mindful Body Scan',
-      'description': 'A meditation technique to bring awareness to each part of your body',
-      'steps': [
-        'Sit or lie down in a comfortable position',
-        'Close your eyes and focus on your breathing',
-        'Bring attention to your feet, noticing any sensations',
-        'Slowly move your attention up through your body',
-        'Notice any areas of tension and breathe into them',
-        'Complete the scan at the top of your head',
-        'Take a moment to feel your entire body as a whole',
-      ],
-      'duration': 240, // seconds
-      'isPremium': true,
-    },
-    {
-      'title': 'Personalized Craving Analysis',
-      'description': 'Analyze your craving triggers and develop personalized coping strategies',
-      'steps': [
-        'Identify what triggered this specific craving',
-        'Rate the intensity of your craving from 1-10',
-        'Write down your thoughts and emotions',
-        'Identify patterns from previous cravings',
-        'Select a personalized coping strategy',
-        'Implement the strategy and note its effectiveness',
-        'Plan how to handle similar situations in the future',
-      ],
-      'duration': 180, // seconds
-      'isPremium': true,
-    },
+        'Play a quick game on your phone',
+        'Call or text a friend',
+        'Read an article or book',
+        'Listen to your favorite song',
+        'Watch a short video'
+      ]
+    }
   ];
-  
-  // Notification types
-  static const Map<String, String> notificationTypes = {
-    'milestone': 'Health Milestone Achieved',
-    'daily_checkin': 'Time for Your Daily Check-in',
-    'craving_risk': 'High-Risk Time Alert',
-    'motivation': 'Daily Motivation',
-    'streak': 'Streak Milestone',
-    'tip': 'Quitting Tip',
-  };
 }

@@ -286,7 +286,7 @@ class _CheckinScreenState extends State<CheckinScreen> with SingleTickerProvider
       
       try {
         // Create craving model
-        final _ = CravingModel(
+        final _ = CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
           id: const Uuid().v4(),
           timestamp: DateTime.now(),
           intensity: _intensity,

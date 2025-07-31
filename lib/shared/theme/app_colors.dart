@@ -1,84 +1,81 @@
 import 'package:flutter/material.dart';
 
+/// App color palette
 class AppColors {
-  // Primary brand colors
-  static const Color primary = Color(0xFF4CAF50); // Green for health and growth
-  static const Color primaryLight = Color(0xFFA5D6A7);
-  static const Color primaryDark = Color(0xFF2E7D32);
+  // Private constructor to prevent instantiation
+  AppColors._();
+
+  // Primary colors
+  static const Color primary = Color(0xFF4CAF50);
+  static const Color primaryLight = Color(0xFF80E27E);
+  static const Color primaryDark = Color(0xFF087F23);
   
   // Secondary colors
-  static const Color secondary = Color(0xFF2196F3); // Blue for calm and focus
-  static const Color secondaryLight = Color(0xFF90CAF9);
-  static const Color secondaryDark = Color(0xFF1565C0);
+  static const Color secondary = Color(0xFF42A5F5);
+  static const Color secondaryLight = Color(0xFF80D6FF);
+  static const Color secondaryDark = Color(0xFF0077C2);
   
-  // Accent colors
-  static const Color accent = Color(0xFFFF9800); // Orange for motivation
-  static const Color accentLight = Color(0xFFFFCC80);
-  static const Color accentDark = Color(0xFFEF6C00);
+  // Tertiary colors
+  static const Color tertiary = Color(0xFFFFA726);
+  static const Color tertiaryLight = Color(0xFFFFD95B);
+  static const Color tertiaryDark = Color(0xFFC77800);
   
-  // Neutral colors
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color cardBackground = Color(0xFFFFFFFF);
+  // Accent color
+  static const Color accent = Color(0xFFFFA726);
   
   // Text colors
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
+  static const Color textTertiary = Color(0xFF9E9E9E);
   static const Color textLight = Color(0xFFFFFFFF);
   
   // Status colors
   static const Color success = Color(0xFF4CAF50);
-  static const Color warning = Color(0xFFFFC107);
-  static const Color error = Color(0xFFF44336);
-  static const Color info = Color(0xFF2196F3);
+  static const Color error = Color(0xFFE53935);
+  static const Color warning = Color(0xFFFFB74D);
+  static const Color info = Color(0xFF29B6F6);
   
-  // Dark theme colors
-  static const Color darkBackground = Color(0xFF121212);
-  static const Color darkSurface = Color(0xFF1E1E1E);
-  static const Color darkCardBackground = Color(0xFF2C2C2C);
-  static const Color darkTextPrimary = Color(0xFFF5F5F5);
-  static const Color darkTextSecondary = Color(0xFFB0B0B0);
+  // Background colors
+  static const Color background = Color(0xFFF5F5F5);
+  static const Color cardBackground = Color(0xFFFFFFFF);
+  static const Color divider = Color(0xFFBDBDBD);
   
-  // Craving intensity colors
-  static const Color cravingMild = Color(0xFF4CAF50); // Green
-  static const Color cravingModerate = Color(0xFFFFC107); // Yellow
-  static const Color cravingSevere = Color(0xFFF44336); // Red
-  
-  // Progress colors
-  static const Color progressStart = Color(0xFFF44336); // Red
-  static const Color progressMiddle = Color(0xFFFFC107); // Yellow
-  static const Color progressEnd = Color(0xFF4CAF50); // Green
-  
-  // Breathing exercise colors
-  static const Color breatheIn = Color(0xFF2196F3); // Blue
-  static const Color breatheHold = Color(0xFF673AB7); // Purple
-  static const Color breatheOut = Color(0xFF4CAF50); // Green
-  
-  // Get color for craving intensity
+  // Get color for craving intensity (1-5)
   static Color getCravingColor(int intensity) {
-    if (intensity <= 3) {
-      return cravingMild;
-    } else if (intensity <= 7) {
-      return cravingModerate;
-    } else {
-      return cravingSevere;
+    switch (intensity) {
+      case 1:
+        return const Color(0xFF81C784); // Light green
+      case 2:
+        return const Color(0xFFFFB74D); // Orange
+      case 3:
+        return const Color(0xFFFFA726); // Dark orange
+      case 4:
+        return const Color(0xFFF57C00); // Deep orange
+      case 5:
+        return const Color(0xFFE53935); // Red
+      default:
+        return const Color(0xFF81C784); // Default to light green
     }
   }
   
-  // Get color for progress percentage
+  // Get color for progress based on percentage
   static Color getProgressColor(double percentage) {
     if (percentage < 0.3) {
-      return progressStart;
+      return error;
     } else if (percentage < 0.7) {
-      return progressMiddle;
+      return warning;
     } else {
-      return progressEnd;
+      return success;
     }
   }
   
-  // Get gradient for progress
-  static LinearGradient progressGradient = const LinearGradient(
-    colors: [progressStart, progressMiddle, progressEnd],
-    stops: [0.0, 0.5, 1.0],
-  );
+  // Progress gradient
+  static const List<Color> progressGradient = [
+    Color(0xFF4CAF50),  // Green
+    Color(0xFF8BC34A),  // Light Green
+    Color(0xFFCDDC39),  // Lime
+    Color(0xFFFFEB3B),  // Yellow
+    Color(0xFFFFC107),  // Amber
+    Color(0xFFFF9800),  // Orange
+  ];
 }

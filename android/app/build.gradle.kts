@@ -6,9 +6,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.quit_vaping"
+    namespace = "com.llakterian.quitvaping"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion  // Using Flutter default NDK version
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.quit_vaping"
+        applicationId = "com.llakterian.quitvaping"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -30,27 +30,24 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = "upload"
+            keyPassword = "quitvaping123"
+            storeFile = file("upload-keystore.jks")
+            storePassword = "quitvaping123"
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
-            
-            // Enable minification and shrinking for release builds
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    // Google Play Billing Library for in-app purchases
-    implementation("com.android.billingclient:billing:6.0.1")
-    // Google Mobile Ads
-    implementation("com.google.android.gms:play-services-ads:22.5.0")
 }

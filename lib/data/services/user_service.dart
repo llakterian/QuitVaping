@@ -46,12 +46,18 @@ class UserService extends ChangeNotifier {
     required List<String> motivationFactors,
     DateTime? quitDate,
     Map<String, dynamic>? preferences,
+    bool privacyPolicyAccepted = false,
   }) async {
     _isLoading = true;
     notifyListeners();
     
     final userId = _uuid.v4();
     final now = DateTime.now();
+    
+    // Add privacy policy acceptance to preferences
+    final userPreferences = preferences ?? {};
+    userPreferences['privacyPolicyAccepted'] = privacyPolicyAccepted;
+    userPreferences['privacyPolicyAcceptedDate'] = now.toIso8601String();
     
     final user = UserModel(
       id: userId,
@@ -64,7 +70,7 @@ class UserService extends ChangeNotifier {
       vapingHistory: vapingHistory,
       motivationFactors: motivationFactors,
       quitDate: quitDate,
-      preferences: preferences ?? {},
+      preferences: userPreferences,
     );
     
     // Create initial progress if quit date is set
@@ -86,6 +92,53 @@ class UserService extends ChangeNotifier {
     await _storageService.saveUserData(user);
     await _storageService.saveOnboardingComplete(true);
     _currentUser = user;
+    
+    _isLoading = false;
+    notifyListeners();
+  }
+  
+  // Update user profile - combined method for profile screen
+  Future<void> updateProfile({
+    String? name,
+    String? email,
+    String? gender,
+    DateTime? quitDate,
+    int? dailyFrequency,
+    int? nicotineStrength,
+    double? yearsVaping,
+    String? deviceType,
+  }) async {
+    if (_currentUser == null) return;
+    
+    _isLoading = true;
+    notifyListeners();
+    
+    // Update vaping history if any of those fields changed
+    VapingHistoryModel? updatedVapingHistory;
+    if (dailyFrequency != null || nicotineStrength != null || yearsVaping != null || deviceType != null) {
+      final currentHistory = _currentUser!.vapingHistory;
+      updatedVapingHistory = VapingHistoryModel(
+        dailyFrequency: dailyFrequency ?? currentHistory.dailyFrequency,
+        nicotineStrength: nicotineStrength ?? currentHistory.nicotineStrength,
+        yearsVaping: yearsVaping ?? currentHistory.yearsVaping,
+        deviceType: deviceType ?? currentHistory.deviceType,
+        commonTriggers: currentHistory.commonTriggers,
+        previousQuitAttempts: currentHistory.previousQuitAttempts,
+      );
+    }
+    
+    // Update user profile
+    await updateUserProfile(
+      name: name,
+      gender: gender,
+      email: email,
+      vapingHistory: updatedVapingHistory,
+    );
+    
+    // Update quit date if provided
+    if (quitDate != null) {
+      await setQuitDate(quitDate);
+    }
     
     _isLoading = false;
     notifyListeners();

@@ -361,7 +361,7 @@ class CravingAnalytics extends StatelessWidget {
     ];
     
     final entries = triggerDistribution.entries.toList();
-    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + (entry.value == null ? 0 : entry.value));
+    final total = entries.isEmpty ? 0 : entries.fold<int>(0, (sum, entry) => sum + (entry.value as num).toInt());
     
     return PieChart(
       PieChartData(
@@ -394,7 +394,7 @@ class CravingAnalytics extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => (entry.value ?? 0) > max ? (entry.value == null ? 0.0 : (entry.value).toDouble()) : max) * 1.2,
+        maxY: entries.isEmpty ? 10.0 : entries.fold<double>(0.0, (max, entry) => (entry.value as num? ?? 0) > max ? (entry.value as num?)?.toDouble() ?? 0.0 : max) * 1.2,
         barTouchData: BarTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
@@ -452,7 +452,7 @@ class CravingAnalytics extends StatelessWidget {
   // Mock data generation methods
   List<CravingModel> _getMockCravings() {
     return [
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '1',
         timestamp: DateTime.now().subtract(const Duration(days: 7)),
         intensity: 8,
@@ -460,7 +460,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'Friends vaping',
         resolved: true,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '2',
         timestamp: DateTime.now().subtract(const Duration(days: 6)),
         intensity: 7,
@@ -468,7 +468,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'Stress',
         resolved: false,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '3',
         timestamp: DateTime.now().subtract(const Duration(days: 5)),
         intensity: 6,
@@ -476,7 +476,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'Seeing vaping devices',
         resolved: true,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '4',
         timestamp: DateTime.now().subtract(const Duration(days: 4)),
         intensity: 7,
@@ -484,7 +484,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'Party/social gathering',
         resolved: true,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '5',
         timestamp: DateTime.now().subtract(const Duration(days: 3)),
         intensity: 5,
@@ -492,7 +492,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'After eating',
         resolved: true,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '6',
         timestamp: DateTime.now().subtract(const Duration(days: 2)),
         intensity: 4,
@@ -500,7 +500,7 @@ class CravingAnalytics extends StatelessWidget {
         specificTrigger: 'Boredom',
         resolved: false,
       ),
-      CravingModel(
+      CravingModel.create(id: DateTime.now().millisecondsSinceEpoch.toString(), gaveIn: false, 
         id: '7',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
         intensity: 3,
@@ -515,7 +515,7 @@ class CravingAnalytics extends StatelessWidget {
     final distribution = <String, int>{};
     
     for (final craving in cravings) {
-      distribution[craving.triggerCategory] = (distribution[craving.triggerCategory] ?? 0) + 1;
+      distribution[craving.triggerCategory!] = (distribution[craving.triggerCategory!] ?? 0) + 1;
     }
     
     return distribution;

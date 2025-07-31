@@ -1,159 +1,254 @@
-import 'package:uuid/uuid.dart';
+import 'dart:convert';
 
+/// Model representing a craving event
 class CravingModel {
+  /// Unique identifier
   final String id;
+  
+  /// Timestamp when the craving occurred
   final DateTime timestamp;
+  
+  /// Intensity of the craving (1-5)
   final int intensity;
-  final String? location;
-  final String? activity;
-  final String? emotion;
-  final String? notes;
-  final bool resolved;
+  
+  /// Category of the trigger (e.g., stress, social, etc.)
   final String? triggerCategory;
-  final String? specificTrigger;
+  
+  /// Specific trigger description
+  final String? triggerDescription;
+  
+  /// Whether the user gave in to the craving
+  final bool gaveIn;
+  
+  /// Coping strategy used (if any)
   final String? copingStrategy;
-  final String? timeOfDay;
-  final int? duration;
-  final List<CravingInsightModel>? aiInsights;
-
-  CravingModel({
-    String? id,
+  
+  /// User's notes about the craving
+  final String? notes;
+  
+  /// Location where the craving occurred
+  final String? location;
+  
+  /// Specific trigger for the craving
+  final String? specificTrigger;
+  
+  /// Whether the craving was resolved
+  final bool resolved;
+  
+  /// Activity during the craving
+  final String? activity;
+  
+  /// Emotion during the craving
+  final String? emotion;
+  
+  /// Trigger for the craving (alias for specificTrigger)
+  String? get trigger => specificTrigger;
+  
+  /// Creates a new craving model
+  const CravingModel({
+    required this.id,
     required this.timestamp,
     required this.intensity,
     this.triggerCategory,
-    this.specificTrigger,
-    this.location,
-    this.activity,
-    this.emotion,
-    this.timeOfDay,
-    this.duration,
+    this.triggerDescription,
+    required this.gaveIn,
     this.copingStrategy,
     this.notes,
+    this.location,
+    this.specificTrigger,
     this.resolved = false,
-    this.aiInsights,
-  }) : id = id ?? const Uuid().v4();
-
+    this.activity,
+    this.emotion,
+  });
+  
+  /// Creates a craving model from JSON
   factory CravingModel.fromJson(Map<String, dynamic> json) {
     return CravingModel(
-      id: json['id'],
-      timestamp: DateTime.parse(json['timestamp']),
-      intensity: json['intensity'] ?? 0,
-      triggerCategory: json['triggerCategory'],
-      specificTrigger: json['specificTrigger'],
-      location: json['location'],
-      activity: json['activity'],
-      emotion: json['emotion'],
-      timeOfDay: json['timeOfDay'],
-      duration: json['duration'],
-      copingStrategy: json['copingStrategy'],
-      notes: json['notes'],
-      resolved: json['resolved'] ?? false,
-      aiInsights: json['aiInsights'] != null
-          ? (json['aiInsights'] as List)
-              .map((i) => CravingInsightModel.fromJson(i))
-              .toList()
-          : null,
+      id: json['id'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      intensity: json['intensity'] as int,
+      triggerCategory: json['triggerCategory'] as String?,
+      triggerDescription: json['triggerDescription'] as String?,
+      gaveIn: json['gaveIn'] as bool,
+      copingStrategy: json['copingStrategy'] as String?,
+      notes: json['notes'] as String?,
+      location: json['location'] as String?,
+      specificTrigger: json['specificTrigger'] as String?,
+      resolved: json['resolved'] as bool? ?? false,
+      activity: json['activity'] as String?,
+      emotion: json['emotion'] as String?,
     );
   }
-
+  
+  /// Creates a craving model from a JSON string
+  factory CravingModel.fromJsonString(String jsonString) {
+    return CravingModel.fromJson(
+      json.decode(jsonString) as Map<String, dynamic>,
+    );
+  }
+  
+  /// Creates a default craving model
+  factory CravingModel.create({
+    String? id,
+    DateTime? timestamp,
+    int intensity = 3,
+    String? triggerCategory,
+    String? triggerDescription,
+    bool gaveIn = false,
+    String? copingStrategy,
+    String? notes,
+    String? location,
+    String? specificTrigger,
+    bool resolved = false,
+    String? activity,
+    String? emotion,
+  }) {
+    return CravingModel(
+      id: id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      timestamp: timestamp ?? DateTime.now(),
+      intensity: intensity,
+      triggerCategory: triggerCategory,
+      triggerDescription: triggerDescription,
+      gaveIn: gaveIn,
+      copingStrategy: copingStrategy,
+      notes: notes,
+      location: location,
+      specificTrigger: specificTrigger,
+      resolved: resolved,
+      activity: activity,
+      emotion: emotion,
+    );
+  }
+  
+  /// Converts the craving model to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'timestamp': timestamp.toIso8601String(),
       'intensity': intensity,
       'triggerCategory': triggerCategory,
-      'specificTrigger': specificTrigger,
-      'location': location,
-      'activity': activity,
-      'emotion': emotion,
-      'timeOfDay': timeOfDay,
-      'duration': duration,
+      'triggerDescription': triggerDescription,
+      'gaveIn': gaveIn,
       'copingStrategy': copingStrategy,
       'notes': notes,
+      'location': location,
+      'specificTrigger': specificTrigger,
       'resolved': resolved,
-      'aiInsights': aiInsights?.map((i) => i.toJson()).toList(),
+      'activity': activity,
+      'emotion': emotion,
     };
   }
-
+  
+  /// Converts the craving model to a JSON string
+  String toJsonString() {
+    return json.encode(toJson());
+  }
+  
+  /// Creates a copy of this craving model with the given fields replaced
   CravingModel copyWith({
     String? id,
     DateTime? timestamp,
     int? intensity,
     String? triggerCategory,
-    String? specificTrigger,
-    String? location,
-    String? activity,
-    String? emotion,
-    String? timeOfDay,
-    int? duration,
+    String? triggerDescription,
+    bool? gaveIn,
     String? copingStrategy,
     String? notes,
+    String? location,
+    String? specificTrigger,
     bool? resolved,
-    List<CravingInsightModel>? aiInsights,
+    String? activity,
+    String? emotion,
   }) {
     return CravingModel(
       id: id ?? this.id,
       timestamp: timestamp ?? this.timestamp,
       intensity: intensity ?? this.intensity,
       triggerCategory: triggerCategory ?? this.triggerCategory,
-      specificTrigger: specificTrigger ?? this.specificTrigger,
-      location: location ?? this.location,
-      activity: activity ?? this.activity,
-      emotion: emotion ?? this.emotion,
-      timeOfDay: timeOfDay ?? this.timeOfDay,
-      duration: duration ?? this.duration,
+      triggerDescription: triggerDescription ?? this.triggerDescription,
+      gaveIn: gaveIn ?? this.gaveIn,
       copingStrategy: copingStrategy ?? this.copingStrategy,
       notes: notes ?? this.notes,
+      location: location ?? this.location,
+      specificTrigger: specificTrigger ?? this.specificTrigger,
       resolved: resolved ?? this.resolved,
-      aiInsights: aiInsights ?? this.aiInsights,
+      activity: activity ?? this.activity,
+      emotion: emotion ?? this.emotion,
     );
   }
-}
-
-class CravingInsightModel {
-  final String id;
-  final DateTime timestamp;
-  final Map<String, dynamic> insights;
-  final List<String>? recommendedStrategies;
-
-  CravingInsightModel({
-    String? id,
-    required this.timestamp,
-    required this.insights,
-    this.recommendedStrategies,
-  }) : id = id ?? const Uuid().v4();
-
-  factory CravingInsightModel.fromJson(Map<String, dynamic> json) {
-    return CravingInsightModel(
-      id: json['id'],
-      timestamp: DateTime.parse(json['timestamp']),
-      insights: Map<String, dynamic>.from(json['insights']),
-      recommendedStrategies: json['recommendedStrategies'] != null
-          ? List<String>.from(json['recommendedStrategies'])
-          : null,
-    );
+  
+  /// Gets the time of day when the craving occurred
+  String get timeOfDay {
+    final hour = timestamp.hour;
+    if (hour >= 5 && hour < 12) {
+      return 'Morning';
+    } else if (hour >= 12 && hour < 17) {
+      return 'Afternoon';
+    } else if (hour >= 17 && hour < 21) {
+      return 'Evening';
+    } else {
+      return 'Night';
+    }
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'timestamp': timestamp.toIso8601String(),
-      'insights': insights,
-      'recommendedStrategies': recommendedStrategies,
-    };
+  
+  /// Gets the day of week when the craving occurred
+  String get dayOfWeek {
+    switch (timestamp.weekday) {
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return '';
+    }
   }
-
-  CravingInsightModel copyWith({
-    String? id,
-    DateTime? timestamp,
-    Map<String, dynamic>? insights,
-    List<String>? recommendedStrategies,
-  }) {
-    return CravingInsightModel(
-      id: id ?? this.id,
-      timestamp: timestamp ?? this.timestamp,
-      insights: insights ?? this.insights,
-      recommendedStrategies: recommendedStrategies ?? this.recommendedStrategies,
-    );
+  
+  /// Equality operator
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    
+    return other is CravingModel &&
+        other.id == id &&
+        other.timestamp == timestamp &&
+        other.intensity == intensity &&
+        other.triggerCategory == triggerCategory &&
+        other.triggerDescription == triggerDescription &&
+        other.gaveIn == gaveIn &&
+        other.copingStrategy == copingStrategy &&
+        other.notes == notes &&
+        other.location == location &&
+        other.specificTrigger == specificTrigger &&
+        other.resolved == resolved &&
+        other.activity == activity &&
+        other.emotion == emotion;
+  }
+  
+  /// Hash code
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        timestamp.hashCode ^
+        intensity.hashCode ^
+        triggerCategory.hashCode ^
+        triggerDescription.hashCode ^
+        gaveIn.hashCode ^
+        copingStrategy.hashCode ^
+        notes.hashCode ^
+        location.hashCode ^
+        specificTrigger.hashCode ^
+        resolved.hashCode ^
+        activity.hashCode ^
+        emotion.hashCode;
   }
 }

@@ -16,12 +16,15 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# VS Code related
-.vscode/
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
-**/ios/Flutter/.last_build_id
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
@@ -41,49 +44,51 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase
-google-services.json
-GoogleService-Info.plist
-firebase_options.dart
-
-# Environment variables
+# Environment files
 .env
-.env.*
-!.env.example
+.env.local
+.env.production
 
-# Generated files
-*.g.dart
-*.freezed.dart
-*.mocks.dart
+# Backup files
+*_backup_*
+backup_*
 
-# Hive
-/boxes/
-
-# Coverage
-/coverage/
-
-# Netlify
-.netlify/
-
-# Local Netlify folder
-.netlify
+# Development artifacts
+*.sh
+deploy/
+fastlane/
+.scripts/
+*_REPORT.md
+*_GUIDE.md
+*_SUMMARY.md
+*_CHECKLIST.md
+DEPLOYMENT_*.md
+PLAY_STORE_*.md
+PREMIUM_*.md
+PROJECT_*.md
+BREATHING_*.md
+SCREENSHOT_*.md
 
 # Temporary files
 *.tmp
 *.temp
-.temp/
+temp/
+tmp/
 
-# Deployment files
-/deploy/
-/dist/
-# Utility scripts
-/.scripts/
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# Backup directories
-/android_backup_*/
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Generated assets
-/play_store_assets/
-
-# Temporary files
-*.zip
+# Build outputs
+*.apk
+*.aab
+*.ipa
