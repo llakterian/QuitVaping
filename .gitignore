@@ -92,3 +92,4 @@ $RECYCLE.BIN/
 *.apk
 *.aab
 *.ipa
+build/
