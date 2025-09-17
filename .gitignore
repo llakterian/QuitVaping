@@ -78,4 +78,4 @@ firebase_options.dart
 /dist/
 
 # Dev files
-./kiro
+.kiro
