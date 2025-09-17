@@ -2,7 +2,7 @@ name: 🚭 Deploy QuitVaping App to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ master, main ]
   workflow_dispatch:
 
 permissions:
