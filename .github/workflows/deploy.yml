@@ -38,7 +38,6 @@ jobs:
         flutter build web --release \
           --target=lib/main_final_web.dart \
           --base-href "/QuitVaping/" \
-          --web-renderer html \
           --dart-define=FLUTTER_WEB_USE_SKIA=false
           
     - name: Restore original dependencies
