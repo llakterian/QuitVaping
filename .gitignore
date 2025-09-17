@@ -76,3 +76,6 @@ firebase_options.dart
 # Deployment files
 /deploy/
 /dist/
+
+# Dev files
+./kiro
