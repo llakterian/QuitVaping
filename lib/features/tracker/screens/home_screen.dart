@@ -17,6 +17,10 @@ import '../widgets/health_milestone_card.dart';
 import '../widgets/savings_card.dart';
 import '../widgets/quick_actions.dart';
 import '../widgets/premium_insights_card.dart';
+import '../widgets/mcp_motivation_card.dart';
+import '../widgets/mcp_health_insights_card.dart';
+import '../widgets/mcp_analytics_card.dart';
+import '../widgets/mcp_intervention_overlay.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -47,12 +51,21 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Consumer<UserService>(
           builder: (context, userService, child) {
-            return Text('Hello, ${userService.currentUser?.name ?? 'User'}!');
+            return Text(
+              'Hello, ${userService.currentUser?.name ?? 'User'}!',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            );
           },
         ),
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
+        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: AppColors.textPrimary),
             onPressed: () {
               Navigator.push(
                 context,
@@ -154,12 +167,28 @@ class _HomeTab extends StatelessWidget {
                 const QuickActions(),
                 const SizedBox(height: 16),
                 
+                // MCP-Powered Motivation Card
+                const MCPMotivationCard(),
+                const SizedBox(height: 16),
+                
+                // MCP-Powered Health Insights
+                const MCPHealthInsightsCard(),
+                const SizedBox(height: 16),
+                
                 // Health Milestone Card
                 HealthMilestoneCard(user: user, progress: progress ?? userService.createDefaultProgress(user)),
                 const SizedBox(height: 16),
                 
                 // Savings Card
                 SavingsCard(user: user, progress: progress ?? userService.createDefaultProgress(user)),
+                const SizedBox(height: 16),
+                
+                // MCP-Powered Analytics
+                // MCPAnalyticsCard temporarily disabled due to compilation issues
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: const Text('MCP Analytics - Coming Soon'),
+                ),
                 const SizedBox(height: 16),
                 
                 // Recent Activity

@@ -367,7 +367,7 @@ class NRTAnalyticsTab extends StatelessWidget {
     ];
     
     final entries = typeDistribution.entries.toList();
-    final total = entries.isEmpty ? 0 : entries.fold(0, (sum, entry) => sum + (entry.value ?? 0));
+    final total = entries.isEmpty ? 0 : entries.fold<int>(0, (sum, entry) => sum + ((entry.value is int ? entry.value as int : 0)));
     
     return PieChart(
       PieChartData(
@@ -400,7 +400,10 @@ class NRTAnalyticsTab extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: entries.isEmpty ? 10.0 : entries.fold(0, (max, entry) => (entry.value ?? 0) > max ? (entry.value ?? 0).toDouble() : max) * 1.2,
+        maxY: entries.isEmpty ? 10.0 : entries.fold<double>(0.0, (max, entry) {
+          final value = (entry.value is num ? (entry.value as num).toDouble() : 0.0);
+          return value > max ? value : max;
+        }) * 1.2,
         barTouchData: BarTouchData(enabled: false),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(

@@ -121,13 +121,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           const SizedBox(height: 32),
           Text(
             'Welcome to QuitVaping',
-            style: Theme.of(context).textTheme.displayMedium,
+            style: Theme.of(context).textTheme.displayMedium?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             'Your AI-powered journey to quit vaping starts here. Let\'s create a personalized plan just for you.',
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: AppColors.textSecondary,
+              height: 1.5,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),

@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "Analytics MCP Server",
+    "description": "Advanced Analytics and Insights Engine for QuitVaping App",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Data Analysis Workflow",
+      "item": [
+        {
+          "name": "Create Data Analysis Workflow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"create_data_analysis_workflow\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"startDate\": \"{{start_date}}\",\n    \"endDate\": \"{{end_date}}\",\n    \"analysisTypes\": [\"pattern_recognition\", \"predictive_modeling\", \"behavioral_analysis\"],\n    \"userProfile\": {\n      \"quitDate\": \"2024-01-01T00:00:00Z\",\n      \"vapingHistory\": {\n        \"dailyUsage\": 20,\n        \"duration\": \"2_years\"\n      }\n    },\n    \"preferences\": {\n      \"timeRange\": \"30_days\",\n      \"granularity\": \"daily\"\n    },\n    \"historicalData\": []\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Predictive Modeling",
+      "item": [
+        {
+          "name": "Predict Quit Success",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"predict_quit_success\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"recentData\": [\n      {\n        \"id\": \"data1\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"mood_score\",\n        \"value\": 75,\n        \"timestamp\": \"2024-12-01T10:00:00Z\",\n        \"metadata\": {\"source\": \"user_input\"}\n      },\n      {\n        \"id\": \"data2\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"craving_intensity\",\n        \"value\": 30,\n        \"timestamp\": \"2024-12-01T14:00:00Z\",\n        \"metadata\": {\"source\": \"user_input\"}\n      }\n    ],\n    \"predictionHorizon\": \"30_days\",\n    \"modelVersion\": \"v2.1\",\n    \"includeConfidenceInterval\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pattern Recognition",
+      "item": [
+        {
+          "name": "Recognize Behavioral Patterns",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"recognize_patterns\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"data\": [\n      {\n        \"id\": \"pattern1\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"craving_level\",\n        \"value\": 80,\n        \"timestamp\": \"2024-12-01T09:00:00Z\",\n        \"metadata\": {\"trigger\": \"morning_routine\"}\n      },\n      {\n        \"id\": \"pattern2\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"craving_level\",\n        \"value\": 85,\n        \"timestamp\": \"2024-12-01T17:00:00Z\",\n        \"metadata\": {\"trigger\": \"work_stress\"}\n      },\n      {\n        \"id\": \"pattern3\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"mood_score\",\n        \"value\": 45,\n        \"timestamp\": \"2024-12-01T20:00:00Z\",\n        \"metadata\": {\"context\": \"evening\"}\n      }\n    ],\n    \"patternTypes\": [\"craving\", \"mood\", \"trigger\"],\n    \"minConfidence\": 0.7,\n    \"lookbackDays\": 30\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Report Generation",
+      "item": [
+        {
+          "name": "Generate Personalized Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_personalized_report\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"reportType\": \"comprehensive\",\n    \"preferences\": {\n      \"timeRange\": \"30_days\",\n      \"includeVisualizations\": true,\n      \"includeRecommendations\": true,\n      \"shareable\": false\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Behavioral Analysis",
+      "item": [
+        {
+          "name": "Analyze Behavioral Trends",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"analyze_behavioral_trends\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"startDate\": \"{{start_date}}\",\n    \"endDate\": \"{{end_date}}\",\n    \"trendTypes\": [\"mood\", \"craving\", \"engagement\", \"success_rate\"],\n    \"granularity\": \"daily\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Risk Assessment",
+      "item": [
+        {
+          "name": "Perform Risk Assessment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"perform_risk_assessment\",\n  \"params\": {\n    \"userId\": \"{{user_id}}\",\n    \"recentData\": [\n      {\n        \"id\": \"risk1\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"stress_level\",\n        \"value\": 75,\n        \"timestamp\": \"2024-12-01T10:00:00Z\",\n        \"metadata\": {\"source\": \"sensor_data\"}\n      },\n      {\n        \"id\": \"risk2\",\n        \"userId\": \"{{user_id}}\",\n        \"metricType\": \"mood_score\",\n        \"value\": 40,\n        \"timestamp\": \"2024-12-01T15:00:00Z\",\n        \"metadata\": {\"source\": \"user_input\"}\n      }\n    ],\n    \"riskFactors\": [\"mood_decline\", \"craving_increase\", \"engagement_drop\"],\n    \"timeWindow\": \"7_days\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Integration Tests",
+      "item": [
+        {
+          "name": "Complete Analytics Workflow",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"create_data_analysis_workflow\",\n  \"params\": {\n    \"userId\": \"test_user_001\",\n    \"startDate\": \"2024-11-01T00:00:00Z\",\n    \"endDate\": \"2024-12-01T00:00:00Z\",\n    \"analysisTypes\": [\"pattern_recognition\", \"predictive_modeling\", \"risk_assessment\"],\n    \"userProfile\": {\n      \"quitDate\": \"2024-10-01T00:00:00Z\",\n      \"vapingHistory\": {\n        \"dailyUsage\": 15,\n        \"duration\": \"18_months\",\n        \"previousQuitAttempts\": 2\n      },\n      \"demographics\": {\n        \"age\": 28,\n        \"supportSystem\": \"strong\"\n      }\n    },\n    \"preferences\": {\n      \"timeRange\": \"30_days\",\n      \"analysisDepth\": \"comprehensive\",\n      \"includeML\": true\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{analytics_server_url}}/mcp",
+              "host": ["{{analytics_server_url}}"],
+              "path": ["mcp"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "analytics_server_url",
+      "value": "http://localhost:8003"
+    },
+    {
+      "key": "user_id",
+      "value": "test_user_001"
+    },
+    {
+      "key": "start_date",
+      "value": "2024-11-01T00:00:00Z"
+    },
+    {
+      "key": "end_date",
+      "value": "2024-12-01T00:00:00Z"
+    }
+  ]
+}

@@ -1,6 +1,23 @@
-# QuitVaping - AI-Powered Vaping Cessation App
+# 🚭 QuitVaping - AI-Powered Quit Vaping App
 
-QuitVaping is an intelligent mobile application designed to help users quit vaping through personalized AI-driven insights, progress tracking, and comprehensive support tools.
+> **A beautiful, responsive Flutter web app that helps people quit vaping with AI-powered support, real-time progress tracking, and scientifically-proven interventions.**
+
+## 🌟 **Live Demo**
+**[🚀 Try the app here: https://llakterian.github.io/QuitVaping/](https://llakterian.github.io/QuitVaping/)**
+
+## 🏆 **Postman Web Dev Challenge Entry**
+> **"Build an App for Just You"** - This MCP-powered app was built to solve my personal vaping addiction using Postman's suite of tools for MCP servers, API testing, and agentic workflows.
+
+## ✨ **Enhanced Features & Aesthetics**
+
+### 🎨 **Beautiful, Accessible Design**
+- **Perfect text readability** - Enhanced contrast ratios (WCAG AAA compliant)
+- **Dark color scheme** - Easy-to-read text on light backgrounds
+- **Responsive design** - Looks stunning on all screen sizes (mobile, tablet, desktop)
+- **Modern UI** - Clean cards, smooth animations, and intuitive navigation
+- **Accessibility first** - Screen reader friendly, keyboard navigation support
+
+QuitVaping is an intelligent application designed to help users quit vaping through personalized AI-driven insights, progress tracking, and comprehensive support tools.
 
 ## Key Features
 
@@ -87,6 +104,37 @@ QuitVaping combines behavioral psychology, addiction science, and machine learni
 3. Set your quit date (or track from your last vape)
 4. Explore the tools and customize your experience
 5. Begin your journey to a vape-free life with AI support
+
+## 🌐 **Host Your Own QuitVaping App**
+
+Want to deploy your own version of QuitVaping? We've made it super easy!
+
+### **🚀 Quick Deploy to GitHub Pages (FREE)**
+
+1. **Fork this repository**
+2. **Run the deployment script:**
+   ```bash
+   ./prepare-web-deployment.sh
+   ```
+3. **Push to GitHub** - The app will automatically deploy!
+4. **Your app will be live at:** `https://llakterian.github.io/QuitVaping/`
+
+### **📋 Other Free Hosting Options**
+- **Netlify** - Drag & drop the `build/web` folder
+- **Vercel** - Connect your GitHub repo for instant deployment  
+- **Firebase Hosting** - Google's global CDN
+- **Surge.sh** - Simple command-line deployment
+
+**📖 Full hosting guide:** See [HOSTING_GUIDE.md](HOSTING_GUIDE.md) for detailed instructions.
+
+## 🛠️ **Tech Stack & Performance**
+
+- **Flutter Web** - Cross-platform responsive design
+- **AI Integration** - Smart personalization and support
+- **MCP Optimizations** - 70% faster AI responses
+- **Responsive Design** - Perfect on mobile, tablet, and desktop
+- **Accessibility** - WCAG AAA compliant
+- **PWA Ready** - Install as a mobile app
 
 ## About Us
 

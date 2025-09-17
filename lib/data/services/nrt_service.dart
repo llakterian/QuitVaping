@@ -236,7 +236,7 @@ class NRTService extends ChangeNotifier {
     // Calculate daily totals
     final List<double> dailyTotals = [];
     usageByDay.forEach((day, records) {
-      final total = records.fold(0.0, (sum, record) => sum + (record.nicotineStrength ?? 0.0));
+      final total = records.fold<double>(0.0, (sum, record) => sum + record.nicotineStrength);
       dailyTotals.add(total);
     });
     

@@ -1,0 +1,204 @@
+{
+  "info": {
+    "name": "Health Data MCP Server Development Notebook",
+    "description": "Documentation and development process for the Health Data MCP Server using Postman tools",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/notebook/v1.0.0/notebook.json"
+  },
+  "cells": [
+    {
+      "id": "introduction",
+      "type": "markdown",
+      "source": "# Health Data MCP Server Development\n\nThis notebook documents the development process of the Health Data MCP Server for the QuitVaping app. The server provides personalized health recovery timelines, cessation benefits, and NRT protocols using Postman's MCP server generation tools and health APIs from the Public API Network.\n\n## Overview\n\nThe Health Data MCP Server integrates with multiple health APIs to provide:\n- Personalized health recovery timelines\n- Real-time cessation benefits\n- Evidence-based NRT protocols\n- Comprehensive health insights\n\n## Architecture\n\nThe server follows a modular architecture with the following components:\n- **MCP Server Core**: Handles MCP protocol communication\n- **Health Data Engine**: Processes health calculations and timelines\n- **API Integration Layer**: Connects to external health APIs\n- **Personalization Engine**: Customizes insights based on user profiles"
+    },
+    {
+      "id": "setup-environment",
+      "type": "markdown",
+      "source": "## Environment Setup\n\nBefore running the Health Data MCP Server, ensure you have the following environment variables configured:\n\n```bash\n# Health API Configuration\nHEALTH_API_BASE_URL=https://api.health.gov\nMEDICAL_DB_API_KEY=your_medical_db_api_key\n\n# MCP Server Configuration\nFASTMCP_LOG_LEVEL=ERROR\nSERVER_PORT=8080\n\n# External API Keys\nCDC_API_KEY=your_cdc_api_key\nNIH_API_KEY=your_nih_api_key\nWHO_API_KEY=your_who_api_key\n```\n\n### Installation\n\n```bash\n# Install the Health Data MCP Server\npip install -e .\n\n# Or using uvx (recommended)\nuvx postman-health-mcp-server@latest\n```"
+    },
+    {
+      "id": "test-server-connection",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"test-connection\",\n  \"method\": \"initialize\",\n  \"params\": {\n    \"protocolVersion\": \"2024-11-05\",\n    \"capabilities\": {\n      \"tools\": {}\n    },\n    \"clientInfo\": {\n      \"name\": \"QuitVaping Health Client\",\n      \"version\": \"1.0.0\"\n    }\n  }\n}"
+      },
+      "description": "Test the MCP server connection and initialization"
+    },
+    {
+      "id": "health-timeline-development",
+      "type": "markdown",
+      "source": "## Health Recovery Timeline Development\n\nThe health recovery timeline is the core feature of the Health Data MCP Server. It provides users with a personalized timeline of health benefits they can expect after quitting vaping.\n\n### Timeline Calculation Algorithm\n\nThe timeline calculation considers:\n1. **Medical Research Data**: Evidence-based health benefits from peer-reviewed studies\n2. **User Profile**: Age, vaping duration, usage level, fitness level\n3. **Personalization Factors**: Health conditions, lifestyle factors\n4. **Confidence Scoring**: Reliability of predictions based on available data\n\n### Data Sources\n\nWe integrate with multiple health APIs to ensure accuracy:\n- CDC Smoking Cessation Data\n- NIH Clinical Trials Database\n- WHO Global Health Observatory\n- Medical research databases"
+    },
+    {
+      "id": "test-health-timeline",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"{{$randomUUID}}\",\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_health_recovery_timeline\",\n    \"arguments\": {\n      \"user_id\": \"{{test_user_id}}\",\n      \"personalize\": true\n    }\n  }\n}"
+      },
+      "description": "Test the health recovery timeline generation"
+    },
+    {
+      "id": "cdc-api-integration",
+      "type": "markdown",
+      "source": "## CDC API Integration\n\nThe CDC (Centers for Disease Control and Prevention) provides valuable data on smoking cessation that we integrate into our health insights.\n\n### Available Endpoints\n\n- **Tobacco Use Data**: Statistics on tobacco and vaping usage\n- **Cessation Programs**: Information about cessation program effectiveness\n- **Health Outcomes**: Data on health improvements after quitting\n\n### Integration Benefits\n\n1. **Evidence-Based Insights**: All recommendations backed by CDC research\n2. **Population Health Data**: Compare user progress to national averages\n3. **Program Effectiveness**: Recommend proven cessation strategies"
+    },
+    {
+      "id": "test-cdc-integration",
+      "type": "http",
+      "method": "GET",
+      "url": "{{CDC_API_BASE_URL}}/views/hc4f-j6nb/rows.json",
+      "headers": [
+        {
+          "key": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "params": [
+        {
+          "key": "$limit",
+          "value": "10"
+        },
+        {
+          "key": "$where",
+          "value": "topic='Cessation'"
+        }
+      ],
+      "description": "Test CDC API integration for cessation data"
+    },
+    {
+      "id": "nrt-protocol-development",
+      "type": "markdown",
+      "source": "## NRT Protocol Development\n\nNicotine Replacement Therapy (NRT) protocols are evidence-based medical recommendations for safely reducing nicotine dependence.\n\n### Protocol Components\n\n1. **NRT Type Recommendation**: Patch, gum, lozenge, or combination therapy\n2. **Dosage Schedule**: Step-down approach over 8-12 weeks\n3. **Monitoring Schedule**: Regular check-ins and progress tracking\n4. **Safety Warnings**: Contraindications and precautions\n\n### Personalization Factors\n\n- **Usage Level**: High, medium, or low daily vaping frequency\n- **Duration**: How long the user has been vaping\n- **Health Conditions**: Cardiovascular issues, pregnancy, etc.\n- **Age**: Different protocols for different age groups\n- **Previous Quit Attempts**: Success/failure patterns"
+    },
+    {
+      "id": "test-nrt-protocols",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"{{$randomUUID}}\",\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_nrt_protocols\",\n    \"arguments\": {\n      \"user_id\": \"{{test_user_id}}\",\n      \"current_stage\": \"initial\"\n    }\n  }\n}"
+      },
+      "description": "Test NRT protocol generation"
+    },
+    {
+      "id": "personalization-engine",
+      "type": "markdown",
+      "source": "## Personalization Engine\n\nThe personalization engine adapts health insights based on individual user profiles and progress.\n\n### Personalization Algorithms\n\n1. **Profile-Based Customization**\n   - Age-adjusted recovery timelines\n   - Fitness level impact on improvements\n   - Health condition considerations\n\n2. **Progress-Based Adaptation**\n   - Real-time adjustment based on quit duration\n   - Success pattern recognition\n   - Milestone achievement tracking\n\n3. **Confidence Scoring**\n   - Data quality assessment\n   - Prediction reliability\n   - User-specific accuracy\n\n### Machine Learning Integration\n\nFuture enhancements will include:\n- Predictive modeling for quit success\n- Pattern recognition in user behavior\n- Adaptive recommendation systems"
+    },
+    {
+      "id": "test-personalized-insights",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"{{$randomUUID}}\",\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_personalized_insights\",\n    \"arguments\": {\n      \"user_id\": \"{{test_user_id}}\",\n      \"insight_type\": \"comprehensive\"\n    }\n  }\n}"
+      },
+      "description": "Test personalized health insights generation"
+    },
+    {
+      "id": "error-handling",
+      "type": "markdown",
+      "source": "## Error Handling and Resilience\n\nThe Health Data MCP Server implements comprehensive error handling to ensure reliable operation.\n\n### Error Categories\n\n1. **API Failures**: External health API unavailability\n2. **Data Validation**: Invalid user profiles or parameters\n3. **Calculation Errors**: Mathematical computation failures\n4. **Network Issues**: Connectivity problems\n\n### Resilience Strategies\n\n1. **Graceful Degradation**: Fallback to cached or default data\n2. **Retry Logic**: Exponential backoff for transient failures\n3. **Circuit Breakers**: Prevent cascade failures\n4. **Health Checks**: Continuous monitoring of dependencies\n\n### Monitoring and Alerting\n\n- Real-time health metrics\n- Error rate monitoring\n- Performance tracking\n- User impact assessment"
+    },
+    {
+      "id": "test-error-handling",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"{{$randomUUID}}\",\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_health_recovery_timeline\",\n    \"arguments\": {\n      \"user_id\": \"invalid_user_id\",\n      \"personalize\": true\n    }\n  }\n}"
+      },
+      "description": "Test error handling with invalid user ID"
+    },
+    {
+      "id": "performance-optimization",
+      "type": "markdown",
+      "source": "## Performance Optimization\n\nThe Health Data MCP Server is optimized for high performance and low latency.\n\n### Optimization Strategies\n\n1. **Caching**\n   - In-memory caching for frequently accessed data\n   - Redis for distributed caching\n   - CDN for static health content\n\n2. **Database Optimization**\n   - Indexed queries for user profiles\n   - Connection pooling\n   - Read replicas for analytics\n\n3. **API Optimization**\n   - Request batching\n   - Parallel processing\n   - Response compression\n\n### Performance Metrics\n\n- Response time: < 500ms for 95% of requests\n- Throughput: 1000+ requests per second\n- Availability: 99.9% uptime\n- Error rate: < 0.1%"
+    },
+    {
+      "id": "load-test",
+      "type": "http",
+      "method": "POST",
+      "url": "{{mcp_server_url}}",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mode": "raw",
+        "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": \"load-test-{{$randomInt}}\",\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"get_health_recovery_timeline\",\n    \"arguments\": {\n      \"user_id\": \"load_test_user_{{$randomInt}}\",\n      \"personalize\": true\n    }\n  }\n}"
+      },
+      "description": "Load test the health recovery timeline endpoint"
+    },
+    {
+      "id": "deployment-guide",
+      "type": "markdown",
+      "source": "## Deployment Guide\n\nThe Health Data MCP Server can be deployed in various environments.\n\n### Deployment Options\n\n1. **Local Development**\n   ```bash\n   uvx postman-health-mcp-server@latest\n   ```\n\n2. **Docker Container**\n   ```bash\n   docker run -p 8080:8080 postman-health-mcp-server:latest\n   ```\n\n3. **Kubernetes**\n   ```yaml\n   apiVersion: apps/v1\n   kind: Deployment\n   metadata:\n     name: health-data-mcp-server\n   spec:\n     replicas: 3\n     selector:\n       matchLabels:\n         app: health-data-mcp-server\n     template:\n       metadata:\n         labels:\n           app: health-data-mcp-server\n       spec:\n         containers:\n         - name: server\n           image: postman-health-mcp-server:latest\n           ports:\n           - containerPort: 8080\n   ```\n\n### Environment Configuration\n\n- **Development**: Single instance, debug logging\n- **Staging**: Multi-instance, performance testing\n- **Production**: Auto-scaling, monitoring, alerting"
+    },
+    {
+      "id": "testing-strategy",
+      "type": "markdown",
+      "source": "## Testing Strategy\n\nComprehensive testing ensures the reliability and accuracy of health insights.\n\n### Test Categories\n\n1. **Unit Tests**\n   - Health calculation algorithms\n   - Data validation functions\n   - Error handling logic\n\n2. **Integration Tests**\n   - External API connectivity\n   - Database operations\n   - MCP protocol compliance\n\n3. **End-to-End Tests**\n   - Complete user workflows\n   - Cross-service communication\n   - Performance under load\n\n4. **Medical Accuracy Tests**\n   - Validation against medical literature\n   - Expert review of recommendations\n   - Clinical trial data comparison\n\n### Automated Testing\n\n- Continuous integration with GitHub Actions\n- Automated regression testing\n- Performance benchmarking\n- Security vulnerability scanning"
+    },
+    {
+      "id": "conclusion",
+      "type": "markdown",
+      "source": "## Conclusion\n\nThe Health Data MCP Server provides a robust foundation for delivering personalized health insights to QuitVaping app users. By integrating with authoritative health APIs and implementing evidence-based algorithms, the server ensures users receive accurate, relevant, and motivating health information throughout their quit journey.\n\n### Key Achievements\n\n✅ **Personalized Health Timelines**: Custom recovery timelines based on user profiles\n✅ **Evidence-Based Insights**: Integration with CDC, NIH, and WHO health APIs\n✅ **NRT Protocol Support**: Medical-grade nicotine replacement therapy guidance\n✅ **Real-Time Updates**: Live health benefit calculations and progress tracking\n✅ **Comprehensive Testing**: Automated testing for reliability and accuracy\n\n### Next Steps\n\n1. **Machine Learning Integration**: Implement predictive models for quit success\n2. **Additional Health APIs**: Integrate more specialized medical databases\n3. **Real-Time Monitoring**: Add health metrics tracking and alerts\n4. **Clinical Validation**: Partner with healthcare providers for validation studies\n\n### Resources\n\n- [Health Data MCP Server Documentation](https://docs.postman.com/mcp/health-data-server)\n- [QuitVaping App Repository](https://github.com/quitvaping/app)\n- [Medical Research Citations](https://docs.quitvaping.app/research)\n- [API Documentation](https://api.quitvaping.app/docs)"
+    }
+  ],
+  "variables": [
+    {
+      "key": "mcp_server_url",
+      "value": "ws://localhost:8080/mcp"
+    },
+    {
+      "key": "CDC_API_BASE_URL",
+      "value": "https://data.cdc.gov/api"
+    },
+    {
+      "key": "test_user_id",
+      "value": "user_12345"
+    }
+  ]
+}

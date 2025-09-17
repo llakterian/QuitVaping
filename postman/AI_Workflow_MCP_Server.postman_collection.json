@@ -1,0 +1,530 @@
+{
+  "info": {
+    "name": "AI Workflow MCP Server",
+    "description": "Collection for testing AI-powered motivation system using Postman AI Agent Builder",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Motivation Content Generation",
+      "item": [
+        {
+          "name": "Generate Positive Mood Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_motivation_content\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"positive\",\n    \"recentActivity\": [\n      {\n        \"activityType\": \"milestone_reached\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\n          \"milestone\": \"24_hours\",\n          \"achievement\": \"1 day smoke-free\"\n        }\n      }\n    ],\n    \"externalFactors\": {\n      \"weather\": \"sunny\",\n      \"timeOfDay\": \"morning\",\n      \"location\": \"home\",\n      \"additionalFactors\": {\n        \"dayOfWeek\": 1,\n        \"isWeekend\": false\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_motivation_content",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_motivation_content"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Struggling Mood Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_motivation_content\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"struggling\",\n    \"recentActivity\": [\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\n          \"intensity\": 8,\n          \"trigger\": \"stress\",\n          \"resolved\": false\n        }\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T10:30:00Z\",\n        \"data\": {\n          \"intensity\": 9,\n          \"trigger\": \"anxiety\",\n          \"resolved\": true\n        }\n      }\n    ],\n    \"externalFactors\": {\n      \"weather\": \"rainy\",\n      \"timeOfDay\": \"evening\",\n      \"location\": \"work\",\n      \"additionalFactors\": {\n        \"dayOfWeek\": 1,\n        \"isWeekend\": false\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_motivation_content",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_motivation_content"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Motivated Mood Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_motivation_content\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"motivated\",\n    \"recentActivity\": [\n      {\n        \"activityType\": \"exercise\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\n          \"type\": \"running\",\n          \"duration\": 30,\n          \"intensity\": \"moderate\"\n        }\n      },\n      {\n        \"activityType\": \"meditation\",\n        \"timestamp\": \"2024-01-15T08:00:00Z\",\n        \"data\": {\n          \"duration\": 10,\n          \"type\": \"breathing\"\n        }\n      }\n    ],\n    \"externalFactors\": {\n      \"weather\": \"clear\",\n      \"timeOfDay\": \"morning\",\n      \"location\": \"gym\",\n      \"additionalFactors\": {\n        \"dayOfWeek\": 6,\n        \"isWeekend\": true\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_motivation_content",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_motivation_content"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Mood Analysis",
+      "item": [
+        {
+          "name": "Analyze Mood from High Craving Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"analyze_mood\",\n  \"params\": {\n    \"activityData\": [\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\"intensity\": 9}\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T10:30:00Z\",\n        \"data\": {\"intensity\": 8}\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T09:15:00Z\",\n        \"data\": {\"intensity\": 7}\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T08:45:00Z\",\n        \"data\": {\"intensity\": 8}\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/analyze_mood",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "analyze_mood"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Analyze Mood from Positive Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"analyze_mood\",\n  \"params\": {\n    \"activityData\": [\n      {\n        \"activityType\": \"milestone_reached\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\"milestone\": \"1_week\"}\n      },\n      {\n        \"activityType\": \"exercise\",\n        \"timestamp\": \"2024-01-15T07:00:00Z\",\n        \"data\": {\"type\": \"yoga\", \"duration\": 20}\n      },\n      {\n        \"activityType\": \"meditation\",\n        \"timestamp\": \"2024-01-15T06:30:00Z\",\n        \"data\": {\"duration\": 15}\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/analyze_mood",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "analyze_mood"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Analyze Mood from Mixed Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"analyze_mood\",\n  \"params\": {\n    \"activityData\": [\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\"intensity\": 5}\n      },\n      {\n        \"activityType\": \"exercise\",\n        \"timestamp\": \"2024-01-15T07:00:00Z\",\n        \"data\": {\"type\": \"walking\", \"duration\": 15}\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T06:30:00Z\",\n        \"data\": {\"intensity\": 6}\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/analyze_mood",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "analyze_mood"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Intervention Planning",
+      "item": [
+        {
+          "name": "Create High Urgency Intervention Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"create_intervention_plan\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"struggling\",\n    \"availableInterventions\": [\"breathing\", \"distraction\", \"motivation\", \"community\"],\n    \"learningData\": {\n      \"interventionEffectiveness\": {\n        \"breathing\": 0.9,\n        \"distraction\": 0.7,\n        \"motivation\": 0.6,\n        \"community\": 0.8\n      },\n      \"preferredInterventions\": {\n        \"breathing\": 5,\n        \"distraction\": 3,\n        \"motivation\": 2,\n        \"community\": 4\n      },\n      \"personalizedData\": {\n        \"success_rate\": 0.75\n      }\n    },\n    \"urgency\": \"high\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/create_intervention_plan",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "create_intervention_plan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Normal Urgency Intervention Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"create_intervention_plan\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"anxious\",\n    \"availableInterventions\": [\"breathing\", \"motivation\", \"distraction\"],\n    \"learningData\": {\n      \"interventionEffectiveness\": {\n        \"breathing\": 0.8,\n        \"motivation\": 0.7,\n        \"distraction\": 0.6\n      },\n      \"preferredInterventions\": {\n        \"breathing\": 4,\n        \"motivation\": 3,\n        \"distraction\": 2\n      },\n      \"personalizedData\": {\n        \"success_rate\": 0.65\n      }\n    },\n    \"urgency\": \"normal\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/create_intervention_plan",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "create_intervention_plan"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Motivated Mood Intervention Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"create_intervention_plan\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"mood\": \"motivated\",\n    \"availableInterventions\": [\"motivation\", \"breathing\", \"community\"],\n    \"learningData\": {\n      \"interventionEffectiveness\": {\n        \"motivation\": 0.9,\n        \"breathing\": 0.7,\n        \"community\": 0.8\n      },\n      \"preferredInterventions\": {\n        \"motivation\": 5,\n        \"breathing\": 3,\n        \"community\": 4\n      },\n      \"personalizedData\": {\n        \"success_rate\": 0.85\n      }\n    },\n    \"urgency\": \"normal\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/create_intervention_plan",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "create_intervention_plan"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Milestone Celebrations",
+      "item": [
+        {
+          "name": "Generate 20 Minutes Celebration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_celebration_message\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"milestone\": \"20 minutes\",\n    \"personalized\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_celebration_message",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_celebration_message"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate 1 Day Celebration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_celebration_message\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"milestone\": \"24 hours\",\n    \"personalized\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_celebration_message",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_celebration_message"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate 1 Week Celebration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_celebration_message\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"milestone\": \"1 week\",\n    \"personalized\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_celebration_message",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_celebration_message"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate 1 Month Celebration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_celebration_message\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"milestone\": \"1 month\",\n    \"personalized\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_celebration_message",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_celebration_message"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate 1 Year Celebration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{POSTMAN_AI_AGENT_API_KEY}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_celebration_message\",\n  \"params\": {\n    \"userId\": \"user_123\",\n    \"milestone\": \"1 year\",\n    \"personalized\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_celebration_message",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_celebration_message"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "AI Workflow Tests",
+      "item": [
+        {
+          "name": "Test Complete Workflow - Struggling User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains motivation content\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('content');",
+                  "    pm.expect(jsonData.content).to.have.property('type');",
+                  "    pm.expect(jsonData.content.type).to.eql('mood_based');",
+                  "});",
+                  "",
+                  "pm.test(\"Content is personalized for struggling mood\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content.metadata.mood).to.eql('struggling');",
+                  "    pm.expect(jsonData.content.content).to.include.oneOf(['struggle', 'tough', 'difficult', 'support']);",
+                  "});",
+                  "",
+                  "pm.test(\"Learning update is provided\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('learning_update');",
+                  "    pm.expect(jsonData.learning_update).to.have.property('personalized_data');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_motivation_content\",\n  \"params\": {\n    \"userId\": \"test_user_struggling\",\n    \"mood\": \"struggling\",\n    \"recentActivity\": [\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\n          \"intensity\": 9,\n          \"trigger\": \"stress\",\n          \"resolved\": false\n        }\n      },\n      {\n        \"activityType\": \"craving_logged\",\n        \"timestamp\": \"2024-01-15T10:30:00Z\",\n        \"data\": {\n          \"intensity\": 8,\n          \"trigger\": \"anxiety\",\n          \"resolved\": false\n        }\n      }\n    ],\n    \"externalFactors\": {\n      \"weather\": \"rainy\",\n      \"timeOfDay\": \"evening\",\n      \"location\": \"home\",\n      \"additionalFactors\": {\n        \"dayOfWeek\": 1,\n        \"isWeekend\": false\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_motivation_content",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_motivation_content"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Complete Workflow - Motivated User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains motivation content\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('content');",
+                  "    pm.expect(jsonData.content).to.have.property('type');",
+                  "    pm.expect(jsonData.content.type).to.eql('mood_based');",
+                  "});",
+                  "",
+                  "pm.test(\"Content is personalized for motivated mood\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content.metadata.mood).to.eql('motivated');",
+                  "    pm.expect(jsonData.content.content).to.include.oneOf(['amazing', 'great', 'fantastic', 'energy']);",
+                  "});",
+                  "",
+                  "pm.test(\"Relevance score is appropriate\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content.relevanceScore).to.be.above(0.5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_motivation_content\",\n  \"params\": {\n    \"userId\": \"test_user_motivated\",\n    \"mood\": \"motivated\",\n    \"recentActivity\": [\n      {\n        \"activityType\": \"milestone_reached\",\n        \"timestamp\": \"{{$isoTimestamp}}\",\n        \"data\": {\n          \"milestone\": \"1_week\",\n          \"achievement\": \"1 week smoke-free\"\n        }\n      },\n      {\n        \"activityType\": \"exercise\",\n        \"timestamp\": \"2024-01-15T07:00:00Z\",\n        \"data\": {\n          \"type\": \"running\",\n          \"duration\": 30,\n          \"intensity\": \"high\"\n        }\n      }\n    ],\n    \"externalFactors\": {\n      \"weather\": \"sunny\",\n      \"timeOfDay\": \"morning\",\n      \"location\": \"park\",\n      \"additionalFactors\": {\n        \"dayOfWeek\": 6,\n        \"isWeekend\": true\n      }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{MCP_SERVER_URL}}/tools/generate_motivation_content",
+              "host": ["{{MCP_SERVER_URL}}"],
+              "path": ["tools", "generate_motivation_content"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set dynamic timestamp",
+          "pm.globals.set('currentTimestamp', new Date().toISOString());"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "MCP_SERVER_URL",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "POSTMAN_AI_AGENT_API_KEY",
+      "value": "your_postman_ai_agent_api_key_here",
+      "type": "string"
+    }
+  ]
+}

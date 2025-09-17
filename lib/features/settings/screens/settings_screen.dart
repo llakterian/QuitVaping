@@ -6,6 +6,8 @@ import '../../../data/services/user_service.dart';
 import '../../../data/services/subscription_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../subscription/screens/subscription_screen.dart';
+import 'mcp_settings_screen.dart';
+import 'performance_settings_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -111,6 +113,33 @@ class SettingsScreen extends StatelessWidget {
             value: true, // Replace with actual value from settings
             onChanged: (value) {
               // Update notification settings
+            },
+          ),
+          
+          // AI & MCP section
+          _buildSectionHeader(context, 'AI & Intelligence'),
+          
+          ListTile(
+            leading: const Icon(Icons.psychology),
+            title: const Text('AI & MCP Settings'),
+            subtitle: const Text('Configure AI preferences and server connections'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MCPSettingsScreen()),
+              );
+            },
+          ),
+          
+          ListTile(
+            leading: const Icon(Icons.speed),
+            title: const Text('Performance Settings'),
+            subtitle: const Text('View performance metrics and optimization settings'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PerformanceSettingsScreen()),
+              );
             },
           ),
           

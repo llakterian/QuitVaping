@@ -1,0 +1,228 @@
+{
+  "info": {
+    "name": "Smart NRT MCP Server",
+    "description": "Collection for testing Smart NRT (Nicotine Replacement Therapy) MCP Server endpoints",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "NRT Protocol Management",
+      "item": [
+        {
+          "name": "Get NRT Protocols",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"get_nrt_protocols\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"profileData\": {\n      \"age\": 30,\n      \"vapingDurationMonths\": 24,\n      \"dailyUsageLevel\": \"medium\",\n      \"healthConditions\": [],\n      \"fitnessLevel\": \"fair\",\n      \"quitDate\": \"2024-01-01T00:00:00Z\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calculate Personalized Dosage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"calculate_personalized_dosage\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [\n        {\"week\": \"1\", \"dosage\": \"21mg\"},\n        {\"week\": \"7\", \"dosage\": \"14mg\"}\n      ],\n      \"durationWeeks\": 12\n    },\n    \"recentUsage\": [\n      {\n        \"id\": \"usage-1\",\n        \"timestamp\": \"2024-01-15T10:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"symptomSeverity\": 0.6,\n    \"withdrawalSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 6,\n        \"timestamp\": \"2024-01-15T09:00:00Z\"\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Symptom Management",
+      "item": [
+        {
+          "name": "Generate Symptom Response",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_symptom_response\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"symptom\": {\n      \"id\": \"symptom-1\",\n      \"type\": \"craving\",\n      \"severity\": 8,\n      \"timestamp\": \"2024-01-15T14:30:00Z\",\n      \"notes\": \"Strong craving after lunch\"\n    },\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [{\"week\": \"1\", \"dosage\": \"21mg\"}]\n    },\n    \"recentSymptoms\": [\n      {\n        \"type\": \"irritability\",\n        \"severity\": 5,\n        \"timestamp\": \"2024-01-15T12:00:00Z\"\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Readiness Assessment",
+      "item": [
+        {
+          "name": "Assess Reduction Readiness",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"assess_reduction_readiness\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"recentSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 3,\n        \"timestamp\": \"2024-01-14T10:00:00Z\"\n      }\n    ],\n    \"recentUsage\": [\n      {\n        \"timestamp\": \"2024-01-14T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-13T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"usageTrend\": \"stable\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Safety Monitoring",
+      "item": [
+        {
+          "name": "Monitor Safety Patterns",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"monitor_safety_patterns\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"recentUsage\": [\n      {\n        \"timestamp\": \"2024-01-15T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-15T10:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-15T12:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"recentSymptoms\": [\n      {\n        \"type\": \"headache\",\n        \"severity\": 9,\n        \"timestamp\": \"2024-01-15T13:00:00Z\"\n      }\n    ],\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [{\"week\": \"1\", \"dosage\": \"21mg\"}]\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Analytics & Reporting",
+      "item": [
+        {
+          "name": "Generate Progress Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"generate_progress_report\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [\n        {\"week\": \"1\", \"dosage\": \"21mg\"},\n        {\"week\": \"7\", \"dosage\": \"14mg\"}\n      ],\n      \"durationWeeks\": 12\n    },\n    \"allUsage\": [\n      {\n        \"timestamp\": \"2024-01-01T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-02T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"allSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 7,\n        \"timestamp\": \"2024-01-01T10:00:00Z\"\n      },\n      {\n        \"type\": \"irritability\",\n        \"severity\": 5,\n        \"timestamp\": \"2024-01-02T14:00:00Z\"\n      }\n    ]\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Predict Success Probability",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"predict_success_probability\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"usageHistory\": [\n      {\n        \"timestamp\": \"2024-01-01T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-02T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"symptomHistory\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 6,\n        \"timestamp\": \"2024-01-01T10:00:00Z\"\n      }\n    ],\n    \"adherenceScore\": 85.0,\n    \"timeOnProtocol\": 15\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Medical Evidence",
+      "item": [
+        {
+          "name": "Get Medical Evidence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"method\": \"get_medical_evidence\",\n  \"params\": {\n    \"query\": \"nrt_effectiveness\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/mcp/smart-nrt",
+              "host": ["{{baseUrl}}"],
+              "path": ["mcp", "smart-nrt"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "test-user-123",
+      "type": "string"
+    }
+  ]
+}

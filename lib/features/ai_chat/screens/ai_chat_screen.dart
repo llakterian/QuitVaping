@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../data/services/ai_service.dart';
 import '../../../data/services/subscription_service.dart';
+import '../../../data/services/mcp_manager_service.dart';
+import '../../../data/services/user_service.dart';
 import '../../../data/models/ai_model.dart';
+import '../../../data/models/mcp_model.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../widgets/chat_message.dart';
 import '../../subscription/widgets/premium_feature_overlay.dart';
@@ -234,11 +237,62 @@ class _AIChatScreenState extends State<AIChatScreen> {
     });
     
     final aiService = Provider.of<AIService>(context, listen: false);
+    final mcpManager = Provider.of<MCPManagerService>(context, listen: false);
+    final userService = Provider.of<UserService>(context, listen: false);
     
     _messageController.clear();
     
     try {
+      // First, send the message through the regular AI service
       await aiService.sendMessage(text);
+      
+      // Then, try to enhance the response with MCP-powered insights
+      final user = userService.currentUser;
+      if (user != null) {
+        try {
+          // Create context for MCP AI workflow
+          final context = AIWorkflowContext(
+            userId: user.id,
+            currentMood: _detectMoodFromMessage(text),
+            recentActivity: [], // This would come from user's recent activities
+            externalFactors: ExternalFactors(
+              weather: 'unknown',
+              timeOfDay: _getTimeOfDay(),
+              location: 'home',
+            ),
+            availableInterventions: [
+              InterventionType.breathing,
+              InterventionType.motivation,
+              InterventionType.distraction,
+            ],
+            learningData: UserLearningProfile(
+              preferredInterventions: {'motivation': 1, 'breathing': 1},
+              personalizedData: {
+                'successfulStrategies': ['morning_routine', 'exercise'],
+                'triggerPatterns': ['stress', 'social_situations'],
+                'lastUpdated': DateTime.now().toIso8601String(),
+              },
+            ),
+          );
+
+          // Get enhanced response from MCP
+          final mcpResponse = await mcpManager.generateMotivationContent(context);
+          
+          if (mcpResponse.responseType == MCPResponseType.motivation && 
+              mcpResponse.data['content'] != null) {
+            // Add the MCP-enhanced response as a follow-up message
+            // TODO: Add MCP-enhanced response to chat when ChatMessage model is fixed
+            // final enhancedMessage = ChatMessage(
+            //   message: '💡 ${mcpResponse.data['content']}',
+            //   isUser: false,
+            // );
+            debugPrint('MCP Enhanced Response: ${mcpResponse.data['content']}');
+          }
+        } catch (mcpError) {
+          // MCP enhancement failed, but regular AI response should still work
+          debugPrint('MCP enhancement failed: $mcpError');
+        }
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -256,6 +310,34 @@ class _AIChatScreenState extends State<AIChatScreen> {
         _scrollToBottom();
       }
     }
+  }
+
+  MoodState _detectMoodFromMessage(String message) {
+    final lowerMessage = message.toLowerCase();
+    
+    if (lowerMessage.contains('stressed') || 
+        lowerMessage.contains('anxious') || 
+        lowerMessage.contains('worried') ||
+        lowerMessage.contains('panic') ||
+        lowerMessage.contains('craving')) {
+      return MoodState.struggling;
+    }
+    
+    if (lowerMessage.contains('good') || 
+        lowerMessage.contains('great') || 
+        lowerMessage.contains('happy') ||
+        lowerMessage.contains('confident')) {
+      return MoodState.positive;
+    }
+    
+    return MoodState.neutral;
+  }
+
+  String _getTimeOfDay() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'morning';
+    if (hour < 17) return 'afternoon';
+    return 'evening';
   }
 
   void _showClearChatDialog() {

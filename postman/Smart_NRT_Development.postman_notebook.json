@@ -1,0 +1,117 @@
+{
+  "cells": [
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "# Smart NRT Management System Development\n\nThis notebook documents the development and testing process for the Smart NRT (Nicotine Replacement Therapy) Management System using MCP (Model Context Protocol) servers and AI-powered algorithms.\n\n## Overview\n\nThe Smart NRT Management System provides:\n- **Medical Database Integration**: Evidence-based NRT protocols from medical databases\n- **Personalized Dosage Calculations**: AI-powered dosage recommendations based on user progress\n- **Intelligent Reminder System**: Adaptive reminders based on user behavior patterns\n- **Withdrawal Symptom Tracking**: Real-time symptom monitoring with intelligent responses\n- **Safety Monitoring**: Automated safety pattern detection and alerts\n- **Progress Analytics**: Comprehensive reporting and success prediction\n\n## Architecture\n\nThe system consists of:\n1. **Flutter Service Layer**: `SmartNRTService` managing state and business logic\n2. **MCP Server**: Python-based server providing medical intelligence\n3. **Medical Database**: Simulated medical protocols and evidence\n4. **AI Algorithms**: Pattern recognition and prediction models\n5. **Safety Monitoring**: Real-time usage pattern analysis"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "## Development Process\n\n### Phase 1: Core Infrastructure Setup\n\n#### 1.1 MCP Server Implementation\nThe Smart NRT MCP Server (`smart_nrt_mcp_server.py`) provides the following tools:\n\n- `get_nrt_protocols`: Generate personalized NRT protocols\n- `calculate_personalized_dosage`: AI-powered dosage calculations\n- `generate_symptom_response`: Intelligent withdrawal symptom responses\n- `assess_reduction_readiness`: Readiness assessment for dosage reduction\n- `monitor_safety_patterns`: Safety monitoring and alert generation\n- `generate_progress_report`: Comprehensive progress analytics\n- `predict_success_probability`: Success prediction using AI models\n- `get_medical_evidence`: Medical evidence retrieval\n\n#### 1.2 Data Models\nImplemented comprehensive data models in `smart_nrt_models.dart`:\n\n- `NRTProtocol`: Medical protocol structure\n- `WithdrawalSymptom`: Symptom tracking\n- `NRTSafetyAlert`: Safety monitoring alerts\n- `NRTProgressReport`: Analytics and reporting\n- `NRTSuccessPrediction`: AI-powered predictions\n- `MedicalEvidence`: Evidence-based recommendations"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "### Phase 2: Medical Database Integration\n\n#### 2.1 Protocol Generation\nThe system integrates with medical databases to provide evidence-based NRT protocols:\n\n**Test Case: Generate NRT Protocol**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"get_nrt_protocols\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"profileData\": {\n      \"age\": 30,\n      \"vapingDurationMonths\": 24,\n      \"dailyUsageLevel\": \"medium\",\n      \"healthConditions\": [],\n      \"fitnessLevel\": \"fair\",\n      \"quitDate\": \"2024-01-01T00:00:00Z\"\n    }\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "**Expected Response:**\n```json\n{\n  \"recommendedNrtType\": \"patch\",\n  \"dosageSchedule\": [\n    {\"week\": 1, \"strength\": 21, \"frequency\": 1},\n    {\"week\": 7, \"strength\": 14, \"frequency\": 1},\n    {\"week\": 9, \"strength\": 7, \"frequency\": 1}\n  ],\n  \"durationWeeks\": 12,\n  \"monitoringSchedule\": [\n    \"Weekly symptom assessment\",\n    \"Bi-weekly progress review\",\n    \"Monthly medical consultation\"\n  ],\n  \"successIndicators\": [\n    \"Reduced withdrawal symptoms\",\n    \"Consistent protocol adherence\",\n    \"Improved quality of life\"\n  ],\n  \"safetyWarnings\": [\n    \"Do not smoke while using NRT\",\n    \"Follow dosing instructions carefully\"\n  ]\n}\n```\n\n#### 2.2 Medical Evidence Integration\nThe system provides access to medical evidence supporting recommendations:"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"get_medical_evidence\",\n  \"params\": {\n    \"query\": \"nrt_effectiveness\"\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "### Phase 3: Personalized Dosage Calculations\n\n#### 3.1 AI-Powered Dosage Recommendations\nThe system uses AI algorithms to calculate personalized dosage recommendations based on:\n- Current protocol progress\n- Recent usage patterns\n- Withdrawal symptom severity\n- User feedback and adherence\n\n**Test Case: Calculate Personalized Dosage**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"calculate_personalized_dosage\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [\n        {\"week\": \"1\", \"dosage\": \"21mg\"},\n        {\"week\": \"7\", \"dosage\": \"14mg\"}\n      ],\n      \"durationWeeks\": 12\n    },\n    \"recentUsage\": [\n      {\n        \"id\": \"usage-1\",\n        \"timestamp\": \"2024-01-15T10:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"symptomSeverity\": 0.6,\n    \"withdrawalSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 6,\n        \"timestamp\": \"2024-01-15T09:00:00Z\"\n      }\n    ]\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "**Expected Response:**\n```json\n{\n  \"recommendedDosage\": \"21mg\",\n  \"adjustment\": \"maintain\",\n  \"confidence\": 0.85,\n  \"reasoning\": \"Current symptoms manageable with existing dosage\",\n  \"nextReviewDate\": \"2024-01-18T10:00:00Z\",\n  \"warnings\": [],\n  \"supportingEvidence\": [\n    \"Clinical Practice Guidelines for NRT\",\n    \"Cochrane Review on NRT Effectiveness\"\n  ]\n}\n```\n\n#### 3.2 Readiness Assessment\nThe system assesses user readiness for dosage reduction:"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"assess_reduction_readiness\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"recentSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 3,\n        \"timestamp\": \"2024-01-14T10:00:00Z\"\n      }\n    ],\n    \"recentUsage\": [\n      {\n        \"timestamp\": \"2024-01-14T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-13T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"usageTrend\": \"stable\"\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "### Phase 4: Intelligent Symptom Management\n\n#### 4.1 Withdrawal Symptom Tracking\nThe system provides intelligent responses to withdrawal symptoms based on:\n- Symptom type and severity\n- Medical evidence\n- Personalized coping strategies\n- Escalation protocols\n\n**Test Case: Generate Symptom Response**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"generate_symptom_response\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"symptom\": {\n      \"id\": \"symptom-1\",\n      \"type\": \"craving\",\n      \"severity\": 8,\n      \"timestamp\": \"2024-01-15T14:30:00Z\",\n      \"notes\": \"Strong craving after lunch\"\n    },\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [{\"week\": \"1\", \"dosage\": \"21mg\"}]\n    },\n    \"recentSymptoms\": [\n      {\n        \"type\": \"irritability\",\n        \"severity\": 5,\n        \"timestamp\": \"2024-01-15T12:00:00Z\"\n      }\n    ]\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "**Expected Response:**\n```json\n{\n  \"id\": \"response_test-user-123_1642258200\",\n  \"userId\": \"test-user-123\",\n  \"symptom\": {\n    \"id\": \"symptom-1\",\n    \"type\": \"craving\",\n    \"severity\": 8\n  },\n  \"message\": \"Strong cravings need immediate attention. Consider an additional NRT dose if safe.\",\n  \"copingStrategies\": [\n    \"Immediate NRT dose\",\n    \"Call support line\",\n    \"Emergency coping plan\"\n  ],\n  \"evidenceSources\": [\n    \"NICE Guidelines\",\n    \"American Heart Association\"\n  ],\n  \"requiresImmediateAction\": true,\n  \"requiresMedicalAttention\": false,\n  \"followUpDate\": \"2024-01-16T14:30:00Z\"\n}\n```"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "### Phase 5: Safety Monitoring\n\n#### 5.1 Automated Safety Pattern Detection\nThe system continuously monitors for safety concerns:\n- Overdose risk detection\n- Interaction warnings\n- Side effect monitoring\n- Usage pattern analysis\n\n**Test Case: Monitor Safety Patterns**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"monitor_safety_patterns\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"recentUsage\": [\n      {\n        \"timestamp\": \"2024-01-15T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-15T10:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-15T12:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"recentSymptoms\": [\n      {\n        \"type\": \"headache\",\n        \"severity\": 9,\n        \"timestamp\": \"2024-01-15T13:00:00Z\"\n      }\n    ],\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [{\"week\": \"1\", \"dosage\": \"21mg\"}]\n    }\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "### Phase 6: Analytics and Reporting\n\n#### 6.1 Progress Report Generation\nThe system generates comprehensive progress reports including:\n- Usage statistics and trends\n- Symptom analysis\n- Milestone achievements\n- Personalized recommendations\n\n**Test Case: Generate Progress Report**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"generate_progress_report\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"currentProtocol\": {\n      \"recommendedNrtType\": \"patch\",\n      \"dosageSchedule\": [\n        {\"week\": \"1\", \"dosage\": \"21mg\"},\n        {\"week\": \"7\", \"dosage\": \"14mg\"}\n      ],\n      \"durationWeeks\": 12\n    },\n    \"allUsage\": [\n      {\n        \"timestamp\": \"2024-01-01T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-02T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"allSymptoms\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 7,\n        \"timestamp\": \"2024-01-01T10:00:00Z\"\n      },\n      {\n        \"type\": \"irritability\",\n        \"severity\": 5,\n        \"timestamp\": \"2024-01-02T14:00:00Z\"\n      }\n    ]\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "#### 6.2 Success Prediction\nThe system uses AI models to predict success probability:\n\n**Test Case: Predict Success Probability**"
+    },
+    {
+      "kind": 2,
+      "language": "http",
+      "value": "POST {{baseUrl}}/mcp/smart-nrt\nContent-Type: application/json\n\n{\n  \"method\": \"predict_success_probability\",\n  \"params\": {\n    \"userId\": \"{{userId}}\",\n    \"usageHistory\": [\n      {\n        \"timestamp\": \"2024-01-01T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      },\n      {\n        \"timestamp\": \"2024-01-02T08:00:00Z\",\n        \"dosage\": \"21mg\"\n      }\n    ],\n    \"symptomHistory\": [\n      {\n        \"type\": \"craving\",\n        \"severity\": 6,\n        \"timestamp\": \"2024-01-01T10:00:00Z\"\n      }\n    ],\n    \"adherenceScore\": 85.0,\n    \"timeOnProtocol\": 15\n  }\n}"
+    },
+    {
+      "kind": 1,
+      "language": "markdown",
+      "value": "## Testing Strategy\n\n### Unit Testing\nComprehensive unit tests cover:\n- Service layer functionality\n- Data model validation\n- Error handling scenarios\n- Fallback mechanisms\n\n### Integration Testing\n- MCP server communication\n- End-to-end workflows\n- Error recovery\n- Performance validation\n\n### Safety Testing\n- Overdose detection accuracy\n- Alert generation timing\n- Medical recommendation validation\n- Edge case handling\n\n## Performance Considerations\n\n### Caching Strategy\n- Medical evidence caching\n- Protocol template caching\n- User preference caching\n- Offline functionality\n\n### Scalability\n- Asynchronous processing\n- Database optimization\n- API rate limiting\n- Load balancing\n\n## Security and Privacy\n\n### Data Protection\n- Encrypted data transmission\n- Local data processing\n- Anonymized analytics\n- HIPAA compliance considerations\n\n### User Consent\n- Granular permission controls\n- Data sharing preferences\n- Opt-out mechanisms\n- Transparency reporting\n\n## Future Enhancements\n\n### Machine Learning Integration\n- Advanced pattern recognition\n- Personalized success prediction\n- Adaptive intervention timing\n- Continuous learning algorithms\n\n### Medical Integration\n- EHR system integration\n- Healthcare provider connectivity\n- Prescription management\n- Clinical decision support\n\n### Community Features\n- Peer support matching\n- Anonymous progress sharing\n- Group challenges\n- Success story sharing"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Postman",
+      "language": "json",
+      "name": "postman"
+    },
+    "language_info": {
+      "name": "json",
+      "version": "1.0.0"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 4
+}

@@ -9,6 +9,7 @@ import '../../../shared/theme/app_colors.dart';
 import '../widgets/nrt_usage_chart.dart';
 import '../widgets/nrt_schedule_card.dart';
 import '../widgets/nrt_analytics_tab.dart';
+import '../widgets/smart_nrt_dashboard.dart';
 
 class NRTTrackerScreen extends StatefulWidget {
   const NRTTrackerScreen({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
   
   @override
@@ -39,7 +40,9 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
         title: const Text('NRT Tracker'),
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
           tabs: const [
+            Tab(text: 'Smart NRT'),
             Tab(text: 'Usage Log'),
             Tab(text: 'Reduction Plan'),
             Tab(text: 'Analytics'),
@@ -48,10 +51,18 @@ class _NRTTrackerScreenState extends State<NRTTrackerScreen> with SingleTickerPr
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          _UsageLogTab(),
-          _ReductionPlanTab(),
-          NRTAnalyticsTab(),
+        children: [
+          Consumer<UserService>(
+            builder: (context, userService, child) {
+              if (userService.currentUser == null) {
+                return const Center(child: Text('Please log in to access Smart NRT'));
+              }
+              return SmartNRTDashboard(userId: userService.currentUser!.id);
+            },
+          ),
+          const _UsageLogTab(),
+          const _ReductionPlanTab(),
+          const NRTAnalyticsTab(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -142,9 +153,15 @@ class _UsageLogTab extends StatelessWidget {
                   final formattedDate = DateFormat.yMMMd().format(date);
                   
                   // Calculate total nicotine for the day
-                  final totalNicotine = dateRecords.fold(
+                  final totalNicotine = dateRecords.fold<double>(
                     0.0,
-                    (sum, record) => sum + (record.nicotineStrength ?? 0.0),
+                    (sum, record) {
+                      final strength = record.nicotineStrength;
+                      if (strength is num) {
+                        return sum + strength.toDouble();
+                      }
+                      return sum;
+                    },
                   );
                   
                   return Card(

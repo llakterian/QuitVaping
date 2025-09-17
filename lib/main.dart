@@ -14,6 +14,13 @@ import 'data/services/notification_service.dart';
 import 'data/services/nrt_service.dart';
 import 'data/services/subscription_service.dart';
 import 'data/services/ad_service.dart';
+import 'data/services/mcp_client_service.dart';
+import 'data/services/mcp_manager_service.dart';
+import 'data/services/mcp_cache_service.dart';
+import 'data/services/battery_optimization_service.dart';
+import 'data/services/mcp_error_handling_service.dart';
+import 'data/services/mcp_user_feedback_service.dart';
+import 'data/services/mcp_performance_optimizer.dart';
 
 void main() async {
   // Ensure Flutter is initialized
@@ -50,9 +57,55 @@ void main() async {
   final subscriptionService = SubscriptionService();
   final adService = AdService();
   
-  // Initialize services
-  await notificationService.init();
-  await adService.initialize();
+  // Initialize MCP services with error handling
+  final mcpClientService = MCPClientService();
+  final mcpCacheService = MCPCacheService();
+  final batteryOptimizationService = BatteryOptimizationService();
+  final mcpPerformanceOptimizer = MCPPerformanceOptimizer();
+  
+  // Initialize MCP error handling and user feedback services
+  final mcpErrorHandlingService = MCPErrorHandlingService();
+  final mcpUserFeedbackService = MCPUserFeedbackService();
+  
+  // Create MCP manager service with all dependencies
+  MCPManagerService? mcpManagerService;
+  try {
+    mcpManagerService = MCPManagerService(
+      mcpClientService,
+      mcpCacheService,
+      mcpErrorHandlingService,
+      mcpUserFeedbackService,
+      batteryOptimizationService,
+      mcpPerformanceOptimizer,
+    );
+  } catch (e) {
+    debugPrint('MCP Manager Service initialization failed: $e');
+    // Continue without MCP manager service
+  }
+  
+  // Initialize services with error handling
+  try {
+    await notificationService.init();
+  } catch (e) {
+    debugPrint('Notification service initialization failed: $e');
+  }
+  
+  try {
+    await adService.initialize();
+  } catch (e) {
+    debugPrint('Ad service initialization failed: $e');
+  }
+  
+  // Initialize MCP services if available
+  try {
+    await mcpCacheService.initialize();
+    await batteryOptimizationService.initialize();
+    if (mcpManagerService != null) {
+      await mcpManagerService.initialize();
+    }
+  } catch (e) {
+    debugPrint('MCP services initialization failed: $e');
+  }
   
   // Run the app with providers
   runApp(
@@ -65,6 +118,13 @@ void main() async {
         Provider<StorageService>(create: (_) => storageService),
         Provider<NotificationService>(create: (_) => notificationService),
         Provider<AdService>(create: (_) => adService),
+        Provider<MCPClientService>(create: (_) => mcpClientService),
+        Provider<MCPCacheService>(create: (_) => mcpCacheService),
+        Provider<BatteryOptimizationService>(create: (_) => batteryOptimizationService),
+        Provider<MCPErrorHandlingService>(create: (_) => mcpErrorHandlingService),
+        Provider<MCPUserFeedbackService>(create: (_) => mcpUserFeedbackService),
+        if (mcpManagerService != null)
+          Provider<MCPManagerService>(create: (_) => mcpManagerService!),
       ],
       child: const QuitVapingApp(),
     ),
