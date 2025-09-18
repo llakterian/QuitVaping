@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/QuitVaping/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="🚭 QuitVaping - Beautiful AI-powered app to help you quit vaping with personalized support, progress tracking, and responsive design. Try it free!">
+  <meta name="keywords" content="quit vaping, vaping cessation, AI support, health app, nicotine addiction, quit smoking">
+  <meta name="author" content="QuitVaping Team">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llakterian.github.io/QuitVaping/">
+  <meta property="og:title" content="🚭 QuitVaping - AI-Powered Quit Vaping App">
+  <meta property="og:description" content="Beautiful, responsive app that helps people quit vaping with AI-powered support and real-time progress tracking.">
+  <meta property="og:image" content="https://llakterian.github.io/QuitVaping/icons/Icon-512.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://llakterian.github.io/QuitVaping/">
+  <meta property="twitter:title" content="🚭 QuitVaping - AI-Powered Quit Vaping App">
+  <meta property="twitter:description" content="Beautiful, responsive app that helps people quit vaping with AI-powered support and real-time progress tracking.">
+  <meta property="twitter:image" content="https://llakterian.github.io/QuitVaping/icons/Icon-512.png">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="QuitVaping">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>QuitVaping</title>
+  <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = "1594146266";
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+</head>
+<body>
+  <div id="loading" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    z-index: 9999;
+  ">
+    <div style="font-size: 48px; margin-bottom: 20px;">🚭</div>
+    <h1 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 600;">QuitVaping</h1>
+    <p style="margin: 0; opacity: 0.8;">Loading your health companion...</p>
+    <div style="
+      margin-top: 30px;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    "></div>
+  </div>
+  
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp();
+            // Hide loading screen once Flutter app starts
+            const loading = document.getElementById('loading');
+            if (loading) {
+              loading.style.opacity = '0';
+              loading.style.transition = 'opacity 0.5s ease';
+              setTimeout(() => loading.remove(), 500);
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

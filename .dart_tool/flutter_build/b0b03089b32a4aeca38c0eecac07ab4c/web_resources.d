@@ -1,0 +1,1 @@
+ /home/micro3/StudioProjects/QuitVaping/build/web/manifest.json /home/micro3/StudioProjects/QuitVaping/build/web/_redirects:  /home/micro3/StudioProjects/QuitVaping/web/index.html /home/micro3/StudioProjects/QuitVaping/web/manifest.json /home/micro3/StudioProjects/QuitVaping/web/_redirects
