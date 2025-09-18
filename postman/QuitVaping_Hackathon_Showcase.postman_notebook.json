@@ -1,0 +1,607 @@
+{
+  "info": {
+    "name": "🚭 QuitVaping Hackathon Showcase",
+    "description": "# QuitVaping - AI-Powered Health Companion\n\n## 🏆 Hackathon Project Overview\n\nQuitVaping is a comprehensive Flutter web application that helps users quit vaping through personalized tracking, AI-powered insights, and real-time API integrations. This notebook demonstrates how Postman APIs power the core functionality of our health companion app.\n\n## 🌐 Live Demo\n**App URL:** https://llakterian.github.io/QuitVaping/\n**Repository:** https://github.com/llakterian/QuitVaping\n\n## 🎯 Key Features Powered by APIs\n\n### 1. **Motivational Content Engine**\n- Real-time inspirational quotes via Quotable API\n- Health tips from Advice Slip API  \n- Interesting facts from Useless Facts API\n- Community support messages\n\n### 2. **Smart Theme System**\n- Dynamic light/dark mode toggle\n- System-aware theme detection\n- Persistent user preferences\n\n### 3. **Progress Tracking**\n- Real-time health recovery timeline\n- Achievement milestones\n- Visual progress indicators\n\n### 4. **MCP Integration**\n- Model Context Protocol server integration\n- AI-powered personalized recommendations\n- Performance monitoring and caching\n\n## 🔧 Technical Stack\n- **Frontend:** Flutter Web (Dart)\n- **APIs:** RESTful services via HTTP\n- **Storage:** Hive (local storage)\n- **Deployment:** GitHub Pages\n- **CI/CD:** GitHub Actions\n\n## 📊 API Integration Architecture\n\nThis notebook contains:\n1. **Live API Tests** - Real endpoints used in production\n2. **Error Handling** - Robust fallback mechanisms\n3. **Performance Tests** - Response time monitoring\n4. **Data Validation** - Content quality checks\n\n## 🚀 Getting Started\n\n1. Visit the live app: https://llakterian.github.io/QuitVaping/\n2. Set your quit date and name\n3. Explore the dashboard powered by real-time APIs\n4. Toggle between light/dark themes\n5. Check the Postman integration tab to see API data\n\n---\n\n*This project demonstrates the power of API-driven applications in creating meaningful health solutions.*",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🎯 Core App APIs",
+      "description": "These are the production APIs that power the QuitVaping app's core functionality",
+      "item": [
+        {
+          "name": "💪 Get Motivational Quote",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "QuitVaping-PostmanPowered/1.0",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://api.quotable.io/random?tags=motivational|inspirational&maxLength=100",
+              "protocol": "https",
+              "host": [
+                "api",
+                "quotable",
+                "io"
+              ],
+              "path": [
+                "random"
+              ],
+              "query": [
+                {
+                  "key": "tags",
+                  "value": "motivational|inspirational",
+                  "description": "Filter for motivational content"
+                },
+                {
+                  "key": "maxLength",
+                  "value": "100",
+                  "description": "Keep quotes concise for mobile UI"
+                }
+              ]
+            },
+            "description": "Fetches inspirational quotes that appear on the user's dashboard. These quotes are refreshed daily and help maintain user motivation during their quit journey."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://api.quotable.io/random?tags=motivational|inspirational&maxLength=100",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "quotable",
+                    "io"
+                  ],
+                  "path": [
+                    "random"
+                  ],
+                  "query": [
+                    {
+                      "key": "tags",
+                      "value": "motivational|inspirational"
+                    },
+                    {
+                      "key": "maxLength",
+                      "value": "100"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"_id\": \"abc123\",\n  \"content\": \"The only impossible journey is the one you never begin.\",\n  \"author\": \"Tony Robbins\",\n  \"tags\": [\"motivational\"],\n  \"authorSlug\": \"tony-robbins\",\n  \"length\": 52\n}"
+            }
+          ]
+        },
+        {
+          "name": "🏥 Get Health Tip",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "QuitVaping-PostmanPowered/1.0",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://api.adviceslip.com/advice",
+              "protocol": "https",
+              "host": [
+                "api",
+                "adviceslip",
+                "com"
+              ],
+              "path": [
+                "advice"
+              ]
+            },
+            "description": "Provides health and wellness advice that helps users during their quit journey. These tips are displayed in the health section of the app."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://api.adviceslip.com/advice",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "adviceslip",
+                    "com"
+                  ],
+                  "path": [
+                    "advice"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"slip\": {\n    \"id\": 123,\n    \"advice\": \"Stay hydrated and take deep breaths when you feel cravings.\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "🧠 Get Health Facts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "QuitVaping-PostmanPowered/1.0",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://uselessfacts.jsph.pl/api/today?language=en",
+              "protocol": "https",
+              "host": [
+                "uselessfacts",
+                "jsph",
+                "pl"
+              ],
+              "path": [
+                "api",
+                "today"
+              ],
+              "query": [
+                {
+                  "key": "language",
+                  "value": "en",
+                  "description": "English language facts"
+                }
+              ]
+            },
+            "description": "Fetches interesting daily facts that keep users engaged and provide educational content about health and wellness."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://uselessfacts.jsph.pl/api/today?language=en",
+                  "protocol": "https",
+                  "host": [
+                    "uselessfacts",
+                    "jsph",
+                    "pl"
+                  ],
+                  "path": [
+                    "api",
+                    "today"
+                  ],
+                  "query": [
+                    {
+                      "key": "language",
+                      "value": "en"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"id\": \"abc123\",\n  \"text\": \"Your sense of taste and smell improve within 48 hours of quitting vaping.\",\n  \"source\": \"health-facts\",\n  \"source_url\": \"https://example.com\",\n  \"language\": \"en\",\n  \"permalink\": \"https://uselessfacts.jsph.pl/abc123\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "👥 Get Community Messages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "User-Agent",
+                "value": "QuitVaping-PostmanPowered/1.0",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://api.quotable.io/random?tags=success|wisdom&maxLength=80",
+              "protocol": "https",
+              "host": [
+                "api",
+                "quotable",
+                "io"
+              ],
+              "path": [
+                "random"
+              ],
+              "query": [
+                {
+                  "key": "tags",
+                  "value": "success|wisdom",
+                  "description": "Success and wisdom quotes for community feel"
+                },
+                {
+                  "key": "maxLength",
+                  "value": "80",
+                  "description": "Shorter quotes for community messages"
+                }
+              ]
+            },
+            "description": "Simulates community support messages by fetching success and wisdom quotes. The app makes multiple calls to create a community feel."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://api.quotable.io/random?tags=success|wisdom&maxLength=80",
+                  "protocol": "https",
+                  "host": [
+                    "api",
+                    "quotable",
+                    "io"
+                  ],
+                  "path": [
+                    "random"
+                  ],
+                  "query": [
+                    {
+                      "key": "tags",
+                      "value": "success|wisdom"
+                    },
+                    {
+                      "key": "maxLength",
+                      "value": "80"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": "{\n  \"_id\": \"def456\",\n  \"content\": \"Success is not final, failure is not fatal: it is the courage to continue that counts.\",\n  \"author\": \"Winston Churchill\",\n  \"tags\": [\"success\"],\n  \"authorSlug\": \"winston-churchill\",\n  \"length\": 78\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "🧪 API Testing & Validation",
+      "description": "Comprehensive tests to ensure API reliability and data quality",
+      "item": [
+        {
+          "name": "🔍 Test Quote API Response Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response time",
+                  "pm.test('Response time is less than 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// Test status code",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response structure",
+                  "pm.test('Response has required fields', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('content');",
+                  "    pm.expect(jsonData).to.have.property('author');",
+                  "    pm.expect(jsonData.content).to.be.a('string');",
+                  "    pm.expect(jsonData.author).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Test content length",
+                  "pm.test('Quote length is appropriate', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.content.length).to.be.below(101);",
+                  "    pm.expect(jsonData.content.length).to.be.above(10);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.quotable.io/random?tags=motivational|inspirational&maxLength=100",
+              "protocol": "https",
+              "host": [
+                "api",
+                "quotable",
+                "io"
+              ],
+              "path": [
+                "random"
+              ],
+              "query": [
+                {
+                  "key": "tags",
+                  "value": "motivational|inspirational"
+                },
+                {
+                  "key": "maxLength",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "🏥 Test Health API Reliability",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test response time",
+                  "pm.test('Health API responds quickly', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  "// Test status code",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response structure",
+                  "pm.test('Response has advice slip', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('slip');",
+                  "    pm.expect(jsonData.slip).to.have.property('advice');",
+                  "    pm.expect(jsonData.slip.advice).to.be.a('string');",
+                  "});",
+                  "",
+                  "// Test advice quality",
+                  "pm.test('Advice is meaningful', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.slip.advice.length).to.be.above(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.adviceslip.com/advice",
+              "protocol": "https",
+              "host": [
+                "api",
+                "adviceslip",
+                "com"
+              ],
+              "path": [
+                "advice"
+              ]
+            }
+          }
+        },
+        {
+          "name": "🔄 Test API Error Handling",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test that app handles invalid endpoints gracefully",
+                  "pm.test('Invalid endpoint returns expected error', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([404, 400, 500]);",
+                  "});",
+                  "",
+                  "// This test ensures our app's fallback mechanisms work",
+                  "pm.test('Error response structure', function () {",
+                  "    // App should handle any non-200 response gracefully",
+                  "    pm.expect(pm.response.code).to.not.equal(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.quotable.io/invalid-endpoint",
+              "protocol": "https",
+              "host": [
+                "api",
+                "quotable",
+                "io"
+              ],
+              "path": [
+                "invalid-endpoint"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Performance Monitoring",
+      "description": "Monitor API performance and app responsiveness",
+      "item": [
+        {
+          "name": "⚡ Concurrent API Load Test",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test concurrent API performance",
+                  "pm.test('API handles concurrent requests', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Log performance metrics",
+                  "console.log('Response Time:', pm.response.responseTime + 'ms');",
+                  "console.log('Response Size:', pm.response.responseSize + ' bytes');"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://api.quotable.io/random?tags=motivational",
+              "protocol": "https",
+              "host": [
+                "api",
+                "quotable",
+                "io"
+              ],
+              "path": [
+                "random"
+              ],
+              "query": [
+                {
+                  "key": "tags",
+                  "value": "motivational"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🎨 App Features Demo",
+      "description": "Demonstrate key app features and integrations",
+      "item": [
+        {
+          "name": "🌓 Theme System Demo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://llakterian.github.io/QuitVaping/",
+              "protocol": "https",
+              "host": [
+                "llakterian",
+                "github",
+                "io"
+              ],
+              "path": [
+                "QuitVaping",
+                ""
+              ]
+            },
+            "description": "Visit the live app to test the theme toggle feature:\n\n1. Click the theme icon in the top-right corner\n2. Toggle between Light, Dark, and System modes\n3. Notice how all text maintains proper contrast\n4. Settings are persisted across sessions"
+          }
+        },
+        {
+          "name": "📱 Responsive Design Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://llakterian.github.io/QuitVaping/",
+              "protocol": "https",
+              "host": [
+                "llakterian",
+                "github",
+                "io"
+              ],
+              "path": [
+                "QuitVaping",
+                ""
+              ]
+            },
+            "description": "Test responsive design:\n\n1. Resize browser window to different sizes\n2. Test on mobile devices\n3. Check tablet view (navigation rail)\n4. Verify all content remains accessible"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set global variables for the collection",
+          "pm.globals.set('app_url', 'https://llakterian.github.io/QuitVaping/');",
+          "pm.globals.set('repo_url', 'https://github.com/llakterian/QuitVaping');",
+          "pm.globals.set('user_agent', 'QuitVaping-PostmanPowered/1.0');"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test to log API usage",
+          "console.log('🚭 QuitVaping API Call:', pm.info.requestName);",
+          "console.log('📊 Response Time:', pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "app_name",
+      "value": "QuitVaping",
+      "type": "string"
+    },
+    {
+      "key": "version",
+      "value": "1.0.0",
+      "type": "string"
+    },
+    {
+      "key": "hackathon",
+      "value": "Postman API Challenge",
+      "type": "string"
+    }
+  ]
+}

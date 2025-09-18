@@ -186,11 +186,11 @@ class AppTheme {
         fillColor: AppColors.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
+          borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
+          borderSide: BorderSide(color: AppColors.textSecondary.withOpacity(0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -210,13 +210,13 @@ class AppTheme {
         elevation: 8,
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.textSecondary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
+        color: AppColors.textSecondary.withOpacity(0.2),
         thickness: 1,
         space: 1,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.primaryLight,
-        disabledColor: AppColors.textSecondary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
+        disabledColor: AppColors.textSecondary.withOpacity(0.1),
         selectedColor: AppColors.primary,
         secondarySelectedColor: AppColors.secondary,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -228,7 +228,7 @@ class AppTheme {
         activeTrackColor: AppColors.primary,
         inactiveTrackColor: AppColors.primaryLight,
         thumbColor: AppColors.primary,
-        overlayColor: AppColors.primary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
+        overlayColor: AppColors.primary.withOpacity(0.2),
         trackHeight: 4,
       ),
     );
@@ -408,11 +408,11 @@ class AppTheme {
         fillColor: AppColors.darkSurface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.darkTextSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
+          borderSide: BorderSide(color: AppColors.darkTextSecondary.withOpacity(0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.darkTextSecondary.withValues(alpha: 77)), // 0.3 * 255 ≈ 77
+          borderSide: BorderSide(color: AppColors.darkTextSecondary.withOpacity(0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -432,13 +432,13 @@ class AppTheme {
         elevation: 8,
       ),
       dividerTheme: DividerThemeData(
-        color: AppColors.darkTextSecondary.withValues(alpha: 51), // 0.2 * 255 ≈ 51
+        color: AppColors.darkTextSecondary.withOpacity(0.2),
         thickness: 1,
         space: 1,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.primaryDark,
-        disabledColor: AppColors.darkTextSecondary.withValues(alpha: 26), // 0.1 * 255 ≈ 26
+        disabledColor: AppColors.darkTextSecondary.withOpacity(0.1),
         selectedColor: AppColors.primaryLight,
         secondarySelectedColor: AppColors.secondaryLight,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -450,7 +450,7 @@ class AppTheme {
         activeTrackColor: AppColors.primaryLight,
         inactiveTrackColor: AppColors.primaryDark,
         thumbColor: AppColors.primaryLight,
-        overlayColor: AppColors.primaryLight.withValues(alpha: 51), // 0.2 * 255 ≈ 51
+        overlayColor: AppColors.primaryLight.withOpacity(0.2),
         trackHeight: 4,
       ),
     );

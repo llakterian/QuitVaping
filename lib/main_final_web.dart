@@ -38,13 +38,17 @@ class QuitVapingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QuitVaping',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      home: const QuitVapingHomeScreen(),
+    return Consumer<QuitVapingService>(
+      builder: (context, service, child) {
+        return MaterialApp(
+          title: 'QuitVaping',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: service.themeMode,
+          home: const QuitVapingHomeScreen(),
+        );
+      },
     );
   }
 }
@@ -175,6 +179,7 @@ class QuitVapingService extends ChangeNotifier {
   String _currentHealthFact = 'Loading interesting fact...';
   List<String> _communityMessages = ['Loading community messages...'];
   bool _isLoadingApiData = false;
+  ThemeMode _themeMode = ThemeMode.system;
   
   String get userName => _box.get('userName', defaultValue: 'User');
   DateTime? get quitDate => _box.get('quitDate') != null 
@@ -187,6 +192,23 @@ class QuitVapingService extends ChangeNotifier {
   String get healthFact => _currentHealthFact;
   List<String> get communityMessages => _communityMessages;
   bool get isLoadingApiData => _isLoadingApiData;
+  ThemeMode get themeMode => _themeMode;
+  
+  // Initialize theme mode from storage
+  void initializeTheme() {
+    final savedTheme = _box.get('themeMode', defaultValue: 'system');
+    switch (savedTheme) {
+      case 'light':
+        _themeMode = ThemeMode.light;
+        break;
+      case 'dark':
+        _themeMode = ThemeMode.dark;
+        break;
+      default:
+        _themeMode = ThemeMode.system;
+    }
+    notifyListeners();
+  }
   
   void setUserName(String name) {
     _box.put('userName', name);
@@ -239,7 +261,70 @@ class QuitVapingService extends ChangeNotifier {
   
   // Initialize API data when service starts
   void initializeApiData() {
+    initializeTheme();
     refreshApiData();
+  }
+  
+  // Toggle theme mode
+  void toggleTheme() {
+    switch (_themeMode) {
+      case ThemeMode.system:
+        _themeMode = ThemeMode.light;
+        _box.put('themeMode', 'light');
+        break;
+      case ThemeMode.light:
+        _themeMode = ThemeMode.dark;
+        _box.put('themeMode', 'dark');
+        break;
+      case ThemeMode.dark:
+        _themeMode = ThemeMode.system;
+        _box.put('themeMode', 'system');
+        break;
+    }
+    notifyListeners();
+  }
+  
+  // Set specific theme mode
+  void setThemeMode(ThemeMode mode) {
+    _themeMode = mode;
+    String modeString;
+    switch (mode) {
+      case ThemeMode.light:
+        modeString = 'light';
+        break;
+      case ThemeMode.dark:
+        modeString = 'dark';
+        break;
+      case ThemeMode.system:
+        modeString = 'system';
+        break;
+    }
+    _box.put('themeMode', modeString);
+    notifyListeners();
+  }
+  
+  // Get theme mode display name
+  String get themeModeDisplayName {
+    switch (_themeMode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System';
+    }
+  }
+  
+  // Get theme mode icon
+  IconData get themeModeIcon {
+    switch (_themeMode) {
+      case ThemeMode.light:
+        return Icons.light_mode;
+      case ThemeMode.dark:
+        return Icons.dark_mode;
+      case ThemeMode.system:
+        return Icons.brightness_auto;
+    }
   }
 }
 
@@ -283,13 +368,21 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
             title: Text(
               'Hello, ${service.userName}! 🚭',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textPrimary,
             elevation: 0,
+            actions: [
+              // Theme toggle button
+              Tooltip(
+                message: 'Theme: ${service.themeModeDisplayName}',
+                child: IconButton(
+                  icon: Icon(service.themeModeIcon),
+                  onPressed: () => service.toggleTheme(),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
           ),
           body: _screens[_currentIndex],
           bottomNavigationBar: LayoutBuilder(
@@ -499,7 +592,6 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           Text(
             'Welcome to QuitVaping',
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-              color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
             ),
             textAlign: TextAlign.center,
@@ -614,7 +706,6 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                               'Vape-Free Progress',
                               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -1648,20 +1739,20 @@ class SettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Profile',
-                                style: TextStyle(
-                                  fontSize: 20,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
                               _buildSettingItem(
+                                context,
                                 Icons.person,
                                 'Name',
                                 service.userName,
                                 () => _editName(context, service),
                               ),
                               _buildSettingItem(
+                                context,
                                 Icons.calendar_today,
                                 'Quit Date',
                                 service.quitDate != null 
@@ -1669,6 +1760,27 @@ class SettingsScreen extends StatelessWidget {
                                   : 'Not set',
                                 () => _editQuitDate(context, service),
                               ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Appearance Settings
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Appearance',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              _buildThemeSelector(context, service),
                             ],
                           ),
                         ),
@@ -1684,26 +1796,20 @@ class SettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'App Settings',
-                                style: TextStyle(
-                                  fontSize: 20,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 16),
                               _buildSettingItem(
-                                Icons.notifications,
-                                'Notifications',
-                                'Manage your notification preferences',
-                                () => _showNotificationSettings(context),
+                                context,
+                                Icons.refresh,
+                                'Refresh Data',
+                                'Update motivational content',
+                                () => service.refreshApiData(),
                               ),
                               _buildSettingItem(
-                                Icons.backup,
-                                'Data & Backup',
-                                'Manage your data and backups',
-                                () => _showDataSettings(context),
-                              ),
-                              _buildSettingItem(
+                                context,
                                 Icons.info,
                                 'About',
                                 'App version and information',
@@ -1717,7 +1823,7 @@ class SettingsScreen extends StatelessWidget {
                       
                       // Reset Data
                       Card(
-                        color: AppColors.error.withOpacity(0.1),
+                        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
                         child: Padding(
                           padding: const EdgeInsets.all(20),
                           child: Column(
@@ -1725,21 +1831,23 @@ class SettingsScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Reset Data',
-                                style: TextStyle(
-                                  fontSize: 20,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.error,
+                                  color: Theme.of(context).colorScheme.error,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text('This will reset all your progress and data.'),
+                              Text(
+                                'This will reset all your progress and data.',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                               const SizedBox(height: 16),
                               ElevatedButton.icon(
                                 onPressed: () => _resetData(context, service),
                                 icon: const Icon(Icons.refresh),
                                 label: const Text('Reset All Data'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.error,
+                                  backgroundColor: Theme.of(context).colorScheme.error,
                                   foregroundColor: Colors.white,
                                 ),
                               ),
@@ -1758,14 +1866,123 @@ class SettingsScreen extends StatelessWidget {
     );
   }
   
-  Widget _buildSettingItem(IconData icon, String title, String subtitle, VoidCallback onTap) {
+  Widget _buildThemeSelector(BuildContext context, QuitVapingService service) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Theme Mode',
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildThemeOption(
+                context,
+                service,
+                ThemeMode.light,
+                Icons.light_mode,
+                'Light',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildThemeOption(
+                context,
+                service,
+                ThemeMode.dark,
+                Icons.dark_mode,
+                'Dark',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildThemeOption(
+                context,
+                service,
+                ThemeMode.system,
+                Icons.brightness_auto,
+                'System',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildThemeOption(
+    BuildContext context,
+    QuitVapingService service,
+    ThemeMode mode,
+    IconData icon,
+    String label,
+  ) {
+    final isSelected = service.themeMode == mode;
+    return InkWell(
+      onTap: () => service.setThemeMode(mode),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected 
+              ? Theme.of(context).colorScheme.primary 
+              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          color: isSelected 
+            ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+            : null,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: isSelected 
+                ? Theme.of(context).colorScheme.primary 
+                : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              size: 28,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected 
+                  ? Theme.of(context).colorScheme.primary 
+                  : Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget _buildSettingItem(
+    BuildContext context,
+    IconData icon, 
+    String title, 
+    String subtitle, 
+    VoidCallback onTap
+  ) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
         child: Row(
           children: [
-            Icon(icon, color: AppColors.primary, size: 24),
+            Icon(
+              icon, 
+              color: Theme.of(context).colorScheme.primary, 
+              size: 24
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -1773,23 +1990,24 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      fontSize: 16,
                     ),
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, size: 16),
+            Icon(
+              Icons.arrow_forward_ios, 
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            ),
           ],
         ),
       ),
