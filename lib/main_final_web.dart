@@ -125,20 +125,43 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
         builder: (context, service, child) {
           if (service.quitDate == null) return const SizedBox.shrink();
           
-          return FloatingActionButton.extended(
-            onPressed: () {
-              service.addCheckIn();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Great job! Check-in recorded! 🎉'),
-                  backgroundColor: AppColors.success,
-                ),
-              );
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isSmall = MediaQuery.of(context).size.width < 400;
+              
+              if (isSmall) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    service.addCheckIn();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Great job! Check-in recorded! 🎉'),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.check_circle),
+                );
+              } else {
+                return FloatingActionButton.extended(
+                  onPressed: () {
+                    service.addCheckIn();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Great job! Check-in recorded! 🎉'),
+                        backgroundColor: AppColors.success,
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  icon: const Icon(Icons.check_circle),
+                  label: const Text('Daily Check-in'),
+                );
+              }
             },
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.check_circle),
-            label: const Text('Daily Check-in'),
           );
         },
       ),
@@ -146,12 +169,20 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
   }
 
   Widget _buildSetupScreen(QuitVapingService service) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Web Demo Banner
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 600;
+        final padding = isWide ? 48.0 : 24.0;
+        
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(padding),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: isWide ? 500 : double.infinity),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+          // Welcome Banner
           Container(
             margin: const EdgeInsets.only(bottom: 32),
             padding: const EdgeInsets.all(20),
@@ -172,10 +203,10 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
             ),
             child: Column(
               children: [
-                const Icon(Icons.web, color: Colors.white, size: 48),
+                const Icon(Icons.favorite, color: Colors.white, size: 48),
                 const SizedBox(height: 12),
                 const Text(
-                  '🚭 QuitVaping Web Demo',
+                  '🚭 QuitVaping',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -184,28 +215,12 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'MCP-Powered Personal Health Companion',
+                  'Your Personal Health Companion',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 230),
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 51),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Postman Web Dev Challenge Entry',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -236,56 +251,75 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           ),
           const SizedBox(height: 32),
           
-          TextField(
-            controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Your Name',
-              hintText: 'Enter your first name',
-              prefixIcon: Icon(Icons.person),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Your Name',
+                hintText: 'Enter your first name',
+                prefixIcon: Icon(Icons.person),
+              ),
             ),
           ),
           const SizedBox(height: 24),
           
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () async {
-                if (_nameController.text.isNotEmpty) {
-                  service.setUserName(_nameController.text);
-                  
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now().subtract(const Duration(days: 365)),
-                    lastDate: DateTime.now().add(const Duration(days: 30)),
-                    helpText: 'When did you quit vaping?',
-                  );
-                  
-                  if (date != null) {
-                    service.setQuitDate(date);
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  if (_nameController.text.isNotEmpty) {
+                    service.setUserName(_nameController.text);
+                    
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+                      lastDate: DateTime.now().add(const Duration(days: 30)),
+                      helpText: 'When did you quit vaping?',
+                    );
+                    
+                    if (date != null) {
+                      service.setQuitDate(date);
+                    }
                   }
-                }
-              },
-              icon: const Icon(Icons.calendar_today),
-              label: const Text('Set Quit Date'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                },
+                icon: const Icon(Icons.calendar_today),
+                label: const Text('Set Quit Date'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
             ),
           ),
-        ],
-      ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildMainScreen(QuitVapingService service) {
     final timeSinceQuit = service.timeSinceQuit;
     
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 800;
+        final isTablet = constraints.maxWidth > 600 && constraints.maxWidth <= 800;
+        final padding = isWide ? 32.0 : (isTablet ? 24.0 : 16.0);
+        
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(padding),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: isWide ? 800 : double.infinity),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
           // Progress Card
           Card(
             child: Padding(
@@ -333,33 +367,74 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                   ),
                   const SizedBox(height: 20),
                   
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatItem(
-                          'Days',
-                          '${timeSinceQuit.inDays}',
-                          Icons.calendar_today,
-                          AppColors.primary,
-                        ),
-                      ),
-                      Expanded(
-                        child: _buildStatItem(
-                          'Hours',
-                          '${timeSinceQuit.inHours % 24}',
-                          Icons.access_time,
-                          AppColors.accent,
-                        ),
-                      ),
-                      Expanded(
-                        child: _buildStatItem(
-                          'Check-ins',
-                          '${service.dailyCheckIns}',
-                          Icons.check_circle,
-                          AppColors.success,
-                        ),
-                      ),
-                    ],
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 400) {
+                        // Stack vertically on very small screens
+                        return Column(
+                          children: [
+                            _buildStatItem(
+                              'Days',
+                              '${timeSinceQuit.inDays}',
+                              Icons.calendar_today,
+                              AppColors.primary,
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildStatItem(
+                                    'Hours',
+                                    '${timeSinceQuit.inHours % 24}',
+                                    Icons.access_time,
+                                    AppColors.accent,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: _buildStatItem(
+                                    'Check-ins',
+                                    '${service.dailyCheckIns}',
+                                    Icons.check_circle,
+                                    AppColors.success,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      } else {
+                        // Row layout for larger screens
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                'Days',
+                                '${timeSinceQuit.inDays}',
+                                Icons.calendar_today,
+                                AppColors.primary,
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                'Hours',
+                                '${timeSinceQuit.inHours % 24}',
+                                Icons.access_time,
+                                AppColors.accent,
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildStatItem(
+                                'Check-ins',
+                                '${service.dailyCheckIns}',
+                                Icons.check_circle,
+                                AppColors.success,
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
@@ -382,7 +457,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'MCP-Powered Motivation',
+                    'Daily Motivation',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,
@@ -453,7 +528,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           
           const SizedBox(height: 16),
           
-          // MCP Features Card
+          // Smart Features Card
           Card(
             color: AppColors.accent.withValues(alpha: 26),
             child: Padding(
@@ -463,10 +538,10 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.settings, color: AppColors.accent),
+                      const Icon(Icons.psychology, color: AppColors.accent),
                       const SizedBox(width: 8),
                       Text(
-                        'MCP-Powered Features',
+                        'Smart Features',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.accent,
@@ -476,12 +551,12 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                  _buildFeatureItem('🤖 AI-Powered Personalization', 'Smart motivation based on your progress'),
-                  _buildFeatureItem('📊 Real-Time Analytics', 'Track your health improvements'),
-                  _buildFeatureItem('🔄 Performance Optimization', '70% faster response times'),
-                  _buildFeatureItem('💾 Smart Caching', '95% cache hit rate for instant access'),
-                  _buildFeatureItem('🔋 Battery Optimization', '25% better battery life'),
-                  _buildFeatureItem('🌐 Responsive Design', 'Perfect on all screen sizes'),
+                  _buildFeatureItem('🤖 AI-Powered Insights', 'Personalized motivation and tips'),
+                  _buildFeatureItem('📊 Progress Analytics', 'Track your health improvements'),
+                  _buildFeatureItem('🎯 Goal Setting', 'Set and achieve milestones'),
+                  _buildFeatureItem('💪 Craving Support', 'Tools to overcome urges'),
+                  _buildFeatureItem('🏆 Achievement System', 'Celebrate your victories'),
+                  _buildFeatureItem('📱 Cross-Platform', 'Works on all devices'),
                 ],
               ),
             ),
@@ -489,7 +564,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           
           const SizedBox(height: 16),
           
-          // Postman Integration Card
+          // Community & Support Card
           Card(
             color: AppColors.secondary.withValues(alpha: 26),
             child: Padding(
@@ -499,10 +574,10 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.api, color: AppColors.secondary),
+                      const Icon(Icons.people, color: AppColors.secondary),
                       const SizedBox(width: 8),
                       Text(
-                        'Postman Integration',
+                        'Support & Community',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.secondary,
@@ -512,19 +587,23 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                  _buildFeatureItem('📋 MCP Server Collections', 'Comprehensive API testing workflows'),
-                  _buildFeatureItem('📊 Performance Monitoring', 'Real-time server health tracking'),
-                  _buildFeatureItem('🔧 Automated Testing', 'CI/CD integration with test suites'),
-                  _buildFeatureItem('📖 API Documentation', 'Complete Postman notebooks'),
-                  _buildFeatureItem('🌐 External Services', 'Health APIs and motivational content'),
+                  _buildFeatureItem('👥 Community Support', 'Connect with others on the same journey'),
+                  _buildFeatureItem('📚 Educational Content', 'Learn about vaping cessation'),
+                  _buildFeatureItem('🩺 Health Tracking', 'Monitor your recovery progress'),
+                  _buildFeatureItem('📞 Crisis Support', 'Emergency help when you need it'),
+                  _buildFeatureItem('🎉 Success Stories', 'Get inspired by others'),
                 ],
               ),
             ),
           ),
           
-          const SizedBox(height: 100), // Space for FAB
-        ],
-      ),
+                  const SizedBox(height: 100), // Space for FAB
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
