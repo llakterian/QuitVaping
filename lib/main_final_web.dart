@@ -459,7 +459,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 77),
+                  color: AppColors.primary.withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -481,7 +481,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
                 Text(
                   'Your Personal Health Companion',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 230),
+                    color: Colors.white.withOpacity(0.9),
                     fontSize: 16,
                   ),
                   textAlign: TextAlign.center,
@@ -709,7 +709,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           
           // Motivational Card
           Card(
-            color: AppColors.primary.withValues(alpha: 26),
+            color: AppColors.primary.withOpacity(0.1),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -794,7 +794,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           
           // Smart Features Card
           Card(
-            color: AppColors.accent.withValues(alpha: 26),
+            color: AppColors.accent.withOpacity(0.1),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -830,7 +830,7 @@ class _QuitVapingHomeScreenState extends State<QuitVapingHomeScreen> {
           
           // Community & Support Card
           Card(
-            color: AppColors.secondary.withValues(alpha: 26),
+            color: AppColors.secondary.withOpacity(0.1),
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -1930,8 +1930,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-//
- Postman Integration Screen - Shows how Postman APIs power the app
+
+// Postman Integration Screen - Shows how Postman APIs power the app
 class PostmanIntegrationScreen extends StatelessWidget {
   const PostmanIntegrationScreen({Key? key}) : super(key: key);
 
