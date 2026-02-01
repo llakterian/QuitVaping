@@ -1,16 +1,16 @@
-# 🚭 QuitVaping - AI-Powered Quit Vaping App
+# QuitVaping - AI-Powered Quit Vaping App
 
 > **A beautiful, responsive Flutter web app that helps people quit vaping with AI-powered support, real-time progress tracking, and scientifically-proven interventions.**
 
-## 🌟 **Live Demo**
-**[🚀 Try the app here: https://llakterian.github.io/QuitVaping/](https://llakterian.github.io/QuitVaping/)**
+## **Live Demo**
+**[ Try the app here: https://llakterian.github.io/QuitVaping/](https://llakterian.github.io/QuitVaping/)**
 
-## 🏆 **Postman Web Dev Challenge Entry**
+##  **Postman Web Dev Challenge Entry**
 > **"Build an App for Just You"** - This MCP-powered app was built to solve my personal vaping addiction using Postman's suite of tools for MCP servers, API testing, and agentic workflows.
 
-## ✨ **Enhanced Features & Aesthetics**
+##  **Enhanced Features & Aesthetics**
 
-### 🎨 **Beautiful, Accessible Design**
+###  **Beautiful, Accessible Design**
 - **Perfect text readability** - Enhanced contrast ratios (WCAG AAA compliant)
 - **Dark color scheme** - Easy-to-read text on light backgrounds
 - **Responsive design** - Looks stunning on all screen sizes (mobile, tablet, desktop)
@@ -105,11 +105,11 @@ QuitVaping combines behavioral psychology, addiction science, and machine learni
 4. Explore the tools and customize your experience
 5. Begin your journey to a vape-free life with AI support
 
-## 🌐 **Host Your Own QuitVaping App**
+##  **Host Your Own QuitVaping App**
 
 Want to deploy your own version of QuitVaping? We've made it super easy!
 
-### **🚀 Quick Deploy to GitHub Pages (FREE)**
+### ** Quick Deploy to GitHub Pages (FREE)**
 
 1. **Fork this repository**
 2. **Run the deployment script:**
@@ -119,15 +119,15 @@ Want to deploy your own version of QuitVaping? We've made it super easy!
 3. **Push to GitHub** - The app will automatically deploy!
 4. **Your app will be live at:** `https://llakterian.github.io/QuitVaping/`
 
-### **📋 Other Free Hosting Options**
+### ** Other Free Hosting Options**
 - **Netlify** - Drag & drop the `build/web` folder
 - **Vercel** - Connect your GitHub repo for instant deployment  
 - **Firebase Hosting** - Google's global CDN
 - **Surge.sh** - Simple command-line deployment
 
-**📖 Full hosting guide:** See [HOSTING_GUIDE.md](HOSTING_GUIDE.md) for detailed instructions.
+** Full hosting guide:** See [HOSTING_GUIDE.md](HOSTING_GUIDE.md) for detailed instructions.
 
-## 🛠️ **Tech Stack & Performance**
+##  **Tech Stack & Performance**
 
 - **Flutter Web** - Cross-platform responsive design
 - **AI Integration** - Smart personalization and support
