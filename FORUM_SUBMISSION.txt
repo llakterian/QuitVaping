@@ -1,0 +1,161 @@
+# POSTMAN COMMUNITY FORUM SUBMISSION
+
+---
+
+## What Collection You Ran
+
+**QuitVaping Production API Tests** - A production API test suite for a quit vaping mobile application. This collection tests health check endpoints, user progress tracking, and craving logging functionality.
+
+---
+
+## The Postman CLI Command You Used
+
+```bash
+# Step 1: Fetch collection from Postman API with authentication
+curl -X GET "https://api.getpostman.com/collections/$COLLECTION_ID" \
+  -H "X-Api-Key: $POSTMAN_API_KEY" \
+  -o postman/fetched-collection.json
+
+# Step 2: Run with built-in reporters
+npx newman run postman/fetched-collection.json \
+  -e postman/fetched-environment.json \
+  -r cli,html,junit,json \
+  --reporter-html-export results/newman-report.html \
+  --reporter-junit-export results/newman-results.xml \
+  --reporter-json-export results/newman-results.json \
+  --bail
+```
+
+**Key Features:**
+- Uses Postman API authentication to fetch latest collection
+- Built-in reporters (no external plugins required)
+- Stops on first failure (`--bail`) for CI environments
+- Multiple output formats (HTML, JUnit XML, JSON)
+
+---
+
+## How You Would Run It In CI
+
+**GitHub Actions Configuration:**
+
+```yaml
+name: Postman API Integration
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    - cron: '0 9 * * 1'  # Weekly on Monday at 9AM
+
+env:
+  POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+  COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
+  ENVIRONMENT_ID: ${{ secrets.POSTMAN_ENVIRONMENT_ID }}
+
+jobs:
+  postman-api-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Newman
+      run: npm install -g newman
+
+    - name: Fetch Collection from Postman API
+      run: |
+        curl -X GET "https://api.getpostman.com/collections/${COLLECTION_ID}" \
+          -H "X-Api-Key: ${POSTMAN_API_KEY}" \
+          -o postman/fetched-collection.json
+
+    - name: Fetch Environment from Postman API
+      run: |
+        curl -X GET "https://api.getpostman.com/environments/${ENVIRONMENT_ID}" \
+          -H "X-Api-Key: ${POSTMAN_API_KEY}" \
+          -o postman/fetched-environment.json
+
+    - name: Run with Built-in Reporters
+      run: |
+        newman run postman/fetched-collection.json \
+          -e postman/fetched-environment.json \
+          -r cli,html,junit,json \
+          --reporter-html-export results/newman-report.html \
+          --reporter-junit-export results/newman-results.xml \
+          --bail
+
+    - name: View Collection Run in Postman
+      run: |
+        echo "View results: https://go.postman.co/reports/collection-run/${COLLECTION_ID}"
+```
+
+**Screenshot/Explanation:**
+The workflow runs automatically on:
+1. Every push to main branch
+2. Every pull request
+3. Weekly on Monday at 9AM (scheduled)
+
+Results can be viewed in GitHub Actions tab and at: `https://go.postman.co/reports/collection-run/{COLLECTION_ID}`
+
+---
+
+## One Thing This Setup Gives You That Running Locally Does NOT
+
+**Automated Scheduling + Centralized Management + History**
+
+Running in CI provides capabilities that local runs cannot match:
+
+1. **Scheduled Runs**: Tests run automatically every Monday at 9AM without manual intervention
+2. **Secure Authentication**: API keys stored as encrypted GitHub secrets, never exposed in code
+3. **Centralized Collection Management**: Fetches the latest collection directly from Postman API
+4. **Historical Tracking**: All runs saved in Postman Reports for comparison and trend analysis
+5. **Failure Alerts**: Immediate detection and notification when tests fail
+6. **Artifact Preservation**: HTML and JUnit reports saved for 90 days in GitHub
+7. **Branch Protection**: Can prevent merges when critical tests fail
+
+---
+
+## Suggestions That Would Improve the Postman CLI
+
+### 1. Built-in OAuth Support
+
+Currently, OAuth authentication requires manual token retrieval. Native support would simplify CI usage:
+
+```bash
+newman run collection.json --oauth-token-url "https://auth.example.com" \
+  --oauth-client-id "$CLIENT_ID" --oauth-client-secret "$CLIENT_SECRET"
+```
+
+### 2. Native GitHub Action
+
+A dedicated GitHub Action would eliminate the need for curl commands:
+
+```yaml
+- name: Run Postman Collection
+  uses: postman/newman-action@v1
+  with:
+    collection-id: ${{ secrets.POSTMAN_COLLECTION_ID }}
+    environment-id: ${{ secrets.POSTMAN_ENVIRONMENT_ID }}
+    reporters: cli,html,junit
+```
+
+### 3. Parallel Test Execution
+
+Built-in support for running collections in parallel would improve CI execution time:
+
+```bash
+newman run collection.json --parallel 4
+```
+
+### 4. Better WebSocket Support
+
+WebSocket-based collections currently have limited CLI support.
+
+---
+
+## Additional Notes
+
+- GitHub repository: `llakterian/QuitVaping`
+- Workflow files located in `.github/workflows/`
+- Postman workspace linked for collection management
+- Native Git integration available via Postman Branches feature

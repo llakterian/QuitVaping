@@ -1,4 +1,4 @@
-name: 🚭 Deploy QuitVaping App to GitHub Pages
+name: Deploy QuitVaping App to GitHub Pages
 
 on:
   push:

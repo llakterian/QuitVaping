@@ -1,0 +1,30 @@
+{
+  "name": "quitvaping",
+  "version": "1.0.0",
+  "description": "> **A beautiful, responsive Flutter web app that helps people quit vaping with AI-powered support, real-time progress tracking, and scientifically-proven interventions.**",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npx newman run postman/QuitVaping_API_Tests.postman_collection.json -e postman/QuitVaping_Test_Environment.postman_environment.json --reporters cli,htmlextra --reporter-htmlextra-export results/newman-report.html",
+    "test:ci": "npx newman run postman/QuitVaping_API_Tests.postman_collection.json -e postman/QuitVaping_Test_Environment.postman_environment.json --reporters cli,junit --reporter-junit-export results/newman-results.xml --bail",
+    "test:detailed": "npx newman run postman/QuitVaping_API_Tests.postman_collection.json -e postman/QuitVaping_Test_Environment.postman_environment.json --reporters cli,htmlextra,junit,json --reporter-htmlextra-export results/newman-report.html --reporter-junit-export results/newman-results.xml --reporter-json-export results/newman-results.json --environment-results-file results/environment.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llakterian/QuitVaping.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/llakterian/QuitVaping/issues"
+  },
+  "homepage": "https://github.com/llakterian/QuitVaping#readme",
+  "devDependencies": {
+    "newman": "^6.2.2",
+    "newman-reporter-htmlextra": "^1.23.1"
+  }
+}

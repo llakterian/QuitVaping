@@ -1,0 +1,27 @@
+image: node:20-alpine
+
+pipelines:
+  default:
+    - step:
+        name: Postman CLI Tests
+        caches:
+          - node
+        script:
+          - npm install -g newman newman-reporter-htmlextra
+          - newman run postman/QuitVaping_API_Tests.postman_collection.json \
+            -e postman/QuitVaping_Test_Environment.postman_environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export newman-report.html \
+            --bail
+        artifacts:
+          - newman-report.html
+  scheduled:
+    - step:
+        name: Weekly Postman Tests
+        trigger: scheduled
+        script:
+          - npm install -g newman newman-reporter-htmlextra
+          - newman run postman/QuitVaping_API_Tests.postman_collection.json \
+            -e postman/QuitVaping_Test_Environment.postman_environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export newman-report.html

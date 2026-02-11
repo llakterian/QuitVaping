@@ -1,0 +1,22 @@
+stages:
+  - test
+
+postman_tests:
+  image: node:20-alpine
+  stage: test
+  before_script:
+    - npm install -g newman newman-reporter-htmlextra
+  script:
+    - newman run postman/QuitVaping_API_Tests.postman_collection.json \
+      -e postman/QuitVaping_Test_Environment.postman_environment.json \
+      --reporters cli,htmlextra \
+      --reporter-htmlextra-export newman-report.html \
+      --bail
+  artifacts:
+    when: always
+    paths:
+      - newman-report.html
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_COMMIT_BRANCH == "main"

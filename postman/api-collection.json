@@ -1,0 +1,139 @@
+{
+  "info": {
+    "name": "QuitVaping Production API Tests",
+    "description": "Production API test suite for QuitVaping application with Postman API authentication",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "{{baseUrl}}",
+      "type": "string"
+    },
+    {
+      "key": "api_version",
+      "value": "v1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response time is less than 500ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);",
+              "});",
+              "",
+              "pm.test('API is healthy', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.status).to.eql('healthy');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/{{api_version}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{api_version}}", "health"]
+        }
+      }
+    },
+    {
+      "name": "User Progress",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response has progress data', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('days_sober');",
+              "    pm.expect(responseJson).to.have.property('money_saved');",
+              "    pm.expect(responseJson).to.have.property('cigarettes_avoided');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/{{api_version}}/user/progress",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{api_version}}", "user", "progress"]
+        }
+      }
+    },
+    {
+      "name": "Log Craving",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 (Created)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Craving logged successfully', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.success).to.be.true;",
+              "    pm.expect(responseJson).to.have.property('craving_id');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intensity\": 7,\n  \"trigger\": \"stress\",\n  \"time\": \"{{$isoTimestamp}}\",\n  \"notes\": \"Postman CLI test\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/{{api_version}}/cravings",
+          "host": ["{{base_url}}"],
+          "path": ["api", "{{api_version}}", "cravings"]
+        }
+      }
+    }
+  ]
+}

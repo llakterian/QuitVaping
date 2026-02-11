@@ -1,4 +1,4 @@
-# 🚀 Force Deploy - $(date)
+# Force Deploy - $(date)
 
 This file is created to force a new deployment.
 

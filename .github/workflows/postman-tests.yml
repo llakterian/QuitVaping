@@ -1,0 +1,80 @@
+name: Postman CLI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 9 * * 1'
+
+env:
+  POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+  COLLECTION_ID: ${{ secrets.COLLECTION_ID }}
+  ENVIRONMENT_ID: ${{ secrets.ENVIRONMENT_ID }}
+
+jobs:
+  postman-api-tests:
+    runs-on: ubuntu-latest
+    name: Postman API Collection Run
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install Postman CLI & Newman
+      run: |
+        npm install -g newman
+        
+    - name: Fetch Collection from Postman API
+      id: fetch-collection
+      run: |
+        curl -X GET "https://api.getpostman.com/collections/$COLLECTION_ID" \
+          -H "X-Api-Key: $POSTMAN_API_KEY" \
+          -o postman/remote-collection.json
+        echo "Collection downloaded successfully"
+        
+    - name: Fetch Environment from Postman API
+      run: |
+        if [ -n "$ENVIRONMENT_ID" ]; then
+          curl -X GET "https://api.getpostman.com/environments/$ENVIRONMENT_ID" \
+            -H "X-Api-Key: $POSTMAN_API_KEY" \
+            -o postman/remote-environment.json
+          echo "Environment downloaded successfully"
+        fi
+        
+    - name: Run Postman Collection with Built-in Reporters
+      id: run-tests
+      run: |
+        newman run postman/remote-collection.json \
+          -e postman/remote-environment.json \
+          -r cli,html,junit,json \
+          --reporter-html-export results/newman-report.html \
+          --reporter-junit-export results/newman-results.xml \
+          --reporter-json-export results/newman-results.json \
+          --bail
+      continue-on-error: false
+      
+    - name: View Collection Run in Postman
+      run: |
+        echo "Collection Run URL: https://go.postman.co/reports/collection-run/${{ secrets.COLLECTION_ID }}"
+        
+    - name: Upload all test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: postman-all-results
+        path: results/
+        
+    - name: Publish HTML Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: postman-html-report
+        path: results/newman-report.html

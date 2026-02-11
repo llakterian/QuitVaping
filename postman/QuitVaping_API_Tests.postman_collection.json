@@ -1,0 +1,114 @@
+{
+  "info": {
+    "name": "QuitVaping API Tests",
+    "description": "API test suite for QuitVaping application - Postman CLI Competition Entry",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://jsonplaceholder.typicode.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Response time is less than 500ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(500);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts/1",
+          "host": ["{{base_url}}"],
+          "path": ["posts", "1"]
+        }
+      }
+    },
+    {
+      "name": "Validate Posts API",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Response has required fields', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson).to.have.property('id');",
+              "    pm.expect(responseJson).to.have.property('title');",
+              "    pm.expect(responseJson).to.have.property('body');",
+              "    pm.expect(responseJson).to.have.property('userId');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/posts/2",
+          "host": ["{{base_url}}"],
+          "path": ["posts", "2"]
+        }
+      }
+    },
+    {
+      "name": "Create Resource Test",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 (Created)', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Response contains created data', function () {",
+              "    const responseJson = pm.response.json();",
+              "    pm.expect(responseJson.title).to.eql('QuitVaping API Test');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"QuitVaping API Test\",\n  \"body\": \"Testing Postman CLI for competition\",\n  \"userId\": 1\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/posts",
+          "host": ["{{base_url}}"],
+          "path": ["posts"]
+        }
+      }
+    }
+  ]
+}

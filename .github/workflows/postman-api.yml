@@ -1,0 +1,82 @@
+name: Postman API Integration
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 9 * * 1'
+
+env:
+  POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+  COLLECTION_ID: ${{ secrets.POSTMAN_COLLECTION_ID }}
+  ENVIRONMENT_ID: ${{ secrets.POSTMAN_ENVIRONMENT_ID }}
+
+jobs:
+  postman-api-run:
+    runs-on: ubuntu-latest
+    name: Postman API Collection
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Newman
+      run: npm install -g newman
+
+    - name: Fetch Collection from Postman API
+      run: |
+        echo "Fetching collection from Postman API..."
+        curl -X GET "https://api.getpostman.com/collections/${COLLECTION_ID}" \
+          -H "X-Api-Key: ${POSTMAN_API_KEY}" \
+          -o postman/fetched-collection.json
+        echo "Collection downloaded successfully"
+
+    - name: Fetch Environment from Postman API
+      if: env.ENVIRONMENT_ID != ''
+      run: |
+        echo "Fetching environment from Postman API..."
+        curl -X GET "https://api.getpostman.com/environments/${ENVIRONMENT_ID}" \
+          -H "X-Api-Key: ${POSTMAN_API_KEY}" \
+          -o postman/fetched-environment.json
+        echo "Environment downloaded successfully"
+
+    - name: Run Postman Collection with Built-in Reporters
+      run: |
+        echo "Running Postman collection..."
+        newman run postman/fetched-collection.json \
+          -e postman/fetched-environment.json \
+          -r cli,html,junit,json \
+          --reporter-html-export results/newman-report.html \
+          --reporter-junit-export results/newman-results.xml \
+          --reporter-json-export results/newman-results.json \
+          --bail
+
+    - name: Show Collection Run URL
+      run: |
+        echo ""
+        echo "============================================"
+        echo "Collection Run Complete!"
+        echo "View detailed results in Postman:"
+        echo "   https://go.postman.co/reports/collection-run/${COLLECTION_ID}"
+        echo "============================================"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: postman-results
+        path: results/
+
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: postman-html
+        path: results/newman-report.html

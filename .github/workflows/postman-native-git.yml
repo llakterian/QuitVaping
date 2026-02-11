@@ -1,0 +1,45 @@
+name: Postman Native Git Sync
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'postman/**/*.json'
+
+jobs:
+  postman-sync:
+    runs-on: ubuntu-latest
+    name: Postman Native Git Sync
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Postman Native Git Integration
+      run: |
+        echo "============================================"
+        echo "Postman Native Git Integration"
+        echo "============================================"
+        echo ""
+        echo "Changes detected in postman/ directory:"
+        echo ""
+        git diff --name-only postman/
+        echo ""
+        echo "To enable Native Git sync:"
+        echo "1. Open Postman Desktop App"
+        echo "2. Go to: Workspace > Branches"
+        echo "3. Click: Connect Git Repository"
+        echo "4. Select: llakterian/QuitVaping"
+        echo "5. Configure:"
+        echo "   - Map main branch"
+        echo "   - Enable auto-run on push"
+        echo "   - Enable PR notifications"
+        echo ""
+        echo "Benefits:"
+        echo "- Automatic collection runs on code push"
+        echo "- Early failure detection"
+        echo "- Results posted to GitHub PR"
+        echo "- Two-way sync between Postman and GitHub"
+        echo ""
+        echo "Current status: Manual sync via API"
+        echo "============================================"

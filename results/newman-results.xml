@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="QuitVaping API Tests" tests="0" time="0.000">
+  <testsuite name="Health Check" id="5ba06892-bf5b-46b1-8a97-154e94516108" timestamp="2026-02-11T15:33:44.894Z" tests="0" failures="0" errors="1" time="0.000">
+    <system-err><![CDATA[Iteration: 0
+RequestError: AggregateError [ETIMEDOUT]: 
+    at internalConnectMultiple (node:net:1123:18)
+    at internalConnectMultiple (node:net:1191:5)
+    at Timeout.internalConnectMultipleTimeout (node:net:1710:5)
+    at listOnTimeout (node:internal/timers:583:11)
+    at process.processTimers (node:internal/timers:519:7)
+
+---
+]]></system-err>
+  </testsuite>
+</testsuites>
